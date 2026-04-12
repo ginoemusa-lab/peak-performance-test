@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Peak Performance Test — Find Out Where You Actually Stand</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>emailjs.init('pQRvG2nBkcUqxNzte');</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #080808; --surface: #111111; --surface2: #1a1a1a; --border: #2a2a2a;
+    --accent: #E8341A; --accent-light: #ff5c3f; --accent-dim: rgba(232,52,26,0.10);
+    --gold: #C9A84C; --gold-dim: rgba(201,168,76,0.10);
+    --white: #f0ece4; --grey: #888;
+    --poor: #c0392b; --average: #d4801a; --above: #c9a84c; --advanced: #27ae60; --elite: #2ecc71;
+  }
+  html,body { min-height:100%; background:var(--black); color:var(--white); font-family:'DM Sans',sans-serif; font-weight:300; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.6; }
+  .app { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px 40px; }
+  .progress-bar-wrap { position:fixed; top:0; left:0; right:0; height:3px; background:var(--border); z-index:100; }
+  .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-light)); transition:width 0.5s cubic-bezier(0.4,0,0.2,1); box-shadow:0 0 12px var(--accent); }
+  .screen { width:100%; max-width:700px; display:none; animation:fadeUp 0.5s ease forwards; }
+  .screen.active { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+ 
+  /* SHARED */
+  .eyebrow { font-size:11px; font-weight:500; letter-spacing:0.25em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+  .eyebrow::before,.eyebrow::after { content:''; display:inline-block; width:28px; height:1px; background:var(--accent); opacity:0.5; }
+  .divider { width:100%; height:1px; background:var(--border); margin:28px 0; }
+  .btn-primary { display:inline-flex; align-items:center; gap:12px; background:var(--accent); color:var(--white); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; padding:18px 40px; border:none; cursor:pointer; transition:all 0.2s; clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px)); }
+  .btn-primary:hover { background:var(--accent-light); transform:translateY(-1px); box-shadow:0 8px 32px rgba(232,52,26,0.35); }
+  .btn-primary svg { width:16px; height:16px; }
+  .btn-primary.gold { background:var(--gold); color:var(--black); }
+  .btn-primary.gold:hover { background:#e8c97a; box-shadow:0 8px 32px rgba(201,168,76,0.35); }
+  .btn-secondary { display:inline-flex; align-items:center; gap:8px; background:transparent; color:var(--grey); font-family:'DM Sans',sans-serif; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; padding:12px 0; border:none; cursor:pointer; transition:color 0.2s; margin-top:16px; }
+  .btn-secondary:hover { color:var(--white); }
+ 
+  /* INTRO */
+  .intro-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(52px,12vw,96px); line-height:0.9; letter-spacing:0.02em; }
+  .intro-title span { color:var(--accent); display:block; }
+  .intro-sub { font-size:15px; color:var(--grey); line-height:1.7; margin:24px 0 28px; max-width:480px; }
+  .pillars-preview { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:28px; }
+  .pillar-chip { display:flex; align-items:center; gap:10px; padding:11px 14px; background:var(--surface); border:1px solid var(--border); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--grey); }
+  .pillar-dot { width:5px; height:5px; background:var(--accent); flex-shrink:0; }
+  .intro-stats { display:flex; gap:32px; margin-bottom:32px; flex-wrap:wrap; }
+  .stat { display:flex; flex-direction:column; gap:4px; }
+  .stat-num { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--accent); line-height:1; }
+  .stat-label { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--grey); }
+ 
+  /* BODYWEIGHT + AGE SCREEN */
+  .bw-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(30px,7vw,50px); line-height:1.0; margin-bottom:10px; }
+  .bw-sub { font-size:14px; color:var(--grey); line-height:1.6; margin-bottom:28px; }
+  .bw-row { display:flex; gap:0; align-items:stretch; margin-bottom:10px; border:1px solid var(--border); }
+  .bw-input { flex:1; background:var(--surface); border:none; color:var(--white); font-family:'Bebas Neue',sans-serif; font-size:38px; letter-spacing:0.05em; padding:16px 20px; outline:none; text-align:center; -webkit-appearance:none; min-width:0; }
+  .bw-input:focus { background:var(--surface2); }
+  .bw-input::placeholder { color:#333; }
+  .bw-unit-toggle { display:flex; flex-direction:column; border-left:1px solid var(--border); }
+  .unit-btn { flex:1; background:var(--surface); border:none; border-bottom:1px solid var(--border); color:var(--grey); font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; letter-spacing:0.1em; padding:0 18px; cursor:pointer; transition:all 0.2s; }
+  .unit-btn:last-child { border-bottom:none; }
+  .unit-btn.active { background:var(--accent); color:var(--white); }
+  .age-section { margin-bottom:10px; }
+  .age-label { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--grey); margin-bottom:10px; }
+  .age-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .age-btn { padding:12px 8px; background:var(--surface); border:1px solid var(--border); color:var(--grey); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:400; cursor:pointer; transition:all 0.2s; text-align:center; }
+  .age-btn.active { background:var(--accent-dim); border-color:var(--accent); color:var(--white); }
+  .bw-error { font-size:12px; color:var(--accent); display:none; margin-bottom:8px; }
+  .bw-error.visible { display:block; }
+  .bw-preview { margin-top:16px; padding:16px; background:var(--surface); border:1px solid var(--border); display:none; }
+  .bw-preview.visible { display:block; }
+  .bw-preview-title { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-bottom:12px; }
+  .bw-preview-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; }
+  .bw-preview-item { padding:10px 10px; background:var(--surface2); border:1px solid var(--border); }
+  .bw-preview-lift { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey); margin-bottom:6px; }
+  .bw-preview-tiers { display:flex; flex-direction:column; gap:3px; }
+  .bw-preview-tier { display:flex; justify-content:space-between; align-items:center; font-size:10px; gap:4px; }
+  .bw-preview-tier-label { color:var(--grey); white-space:nowrap; }
+  .bw-preview-tier-val { color:var(--white); font-weight:500; text-align:right; font-size:10px; }
+ 
+  /* QUESTION */
+  .q-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:10px; }
+  .q-counter { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:0.2em; color:var(--grey); }
+  .q-counter span { color:var(--accent); }
+  .q-category { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); padding:5px 12px; border:1px solid rgba(232,52,26,0.2); }
+  .q-text { font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,5vw,40px); line-height:1.05; letter-spacing:0.02em; margin-bottom:8px; }
+  .q-sub { font-size:13px; color:var(--grey); margin-bottom:8px; line-height:1.6; }
+  .q-bench-note { font-size:12px; color:var(--accent); margin-bottom:20px; padding:8px 12px; background:var(--accent-dim); border-left:2px solid var(--accent); }
+  .options { display:flex; flex-direction:column; gap:8px; }
+  .option { display:flex; align-items:flex-start; gap:14px; padding:13px 16px; background:var(--surface); border:1px solid var(--border); cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
+  .option::before { content:''; position:absolute; left:0; top:0; bottom:0; width:0; background:linear-gradient(90deg,var(--accent-dim),transparent); transition:width 0.3s; }
+  .option:hover::before { width:100%; }
+  .option:hover { border-color:rgba(232,52,26,0.4); }
+  .option.selected { border-color:var(--accent); background:var(--accent-dim); }
+  .option.selected::before { width:100%; }
+  .option-letter { width:26px; height:26px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:13px; color:var(--grey); flex-shrink:0; transition:all 0.2s; margin-top:1px; }
+  .option.selected .option-letter { background:var(--accent); border-color:var(--accent); color:var(--white); }
+  .option-content { flex:1; min-width:0; }
+  .option-text { font-size:13px; font-weight:400; line-height:1.4; color:var(--white); }
+  .option-metric { font-size:11px; color:var(--accent); margin-top:3px; }
+  .option-tier-badge { font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--grey); margin-top:2px; display:block; }
+  .option-score { margin-left:auto; font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--border); flex-shrink:0; transition:color 0.2s; padding-left:10px; }
+  .option.selected .option-score { color:var(--accent); }
+  .q-nav { display:flex; align-items:center; justify-content:space-between; margin-top:28px; }
+ 
+  /* GATE */
+  .gate-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(34px,8vw,58px); line-height:0.95; margin-bottom:12px; }
+  .gate-sub { font-size:14px; color:var(--grey); line-height:1.7; margin-bottom:20px; }
+  .gate-score-tease { display:flex; align-items:center; gap:16px; padding:16px 20px; background:var(--surface); border:1px solid var(--border); margin-bottom:20px; }
+  .gate-blur-score { font-family:'Bebas Neue',sans-serif; font-size:44px; color:var(--accent); filter:blur(8px); user-select:none; line-height:1; flex-shrink:0; }
+  .gate-tease-title { font-size:13px; font-weight:500; color:var(--white); margin-bottom:3px; }
+  .gate-tease-sub { font-size:12px; color:var(--grey); line-height:1.5; }
+  .gate-form { display:flex; flex-direction:column; gap:10px; margin-bottom:10px; }
+  .gate-input-row { display:flex; gap:10px; }
+  .gate-input { flex:1; background:var(--surface); border:1px solid var(--border); color:var(--white); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; padding:14px 16px; outline:none; transition:border-color 0.2s; -webkit-appearance:none; }
+  .gate-input::placeholder { color:#555; }
+  .gate-input:focus { border-color:var(--accent); }
+  .gate-input.error { border-color:#c0392b; }
+  .gate-error { font-size:12px; color:#c0392b; display:none; }
+  .gate-error.visible { display:block; }
+  .gate-privacy { font-size:11px; color:#555; line-height:1.6; margin-top:4px; }
+ 
+  /* RESULTS */
+  .result-hero { text-align:center; padding:0 0 28px; }
+  .result-score-ring { width:150px; height:150px; margin:0 auto 20px; position:relative; }
+  .result-score-ring svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .ring-bg { fill:none; stroke:var(--border); stroke-width:3; }
+  .ring-fill { fill:none; stroke:var(--accent); stroke-width:3; stroke-linecap:round; stroke-dasharray:440; stroke-dashoffset:440; filter:drop-shadow(0 0 8px var(--accent)); transition:stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1); }
+  .ring-number { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .ring-num { font-family:'Bebas Neue',sans-serif; font-size:44px; color:var(--white); line-height:1; }
+  .ring-label { font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--grey); }
+  .result-tier { font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,6vw,48px); letter-spacing:0.05em; margin-bottom:8px; }
+  .result-desc { font-size:14px; color:var(--grey); line-height:1.7; max-width:500px; margin:0 auto; }
+ 
+  /* RANKING BLOCK */
+  .ranking-block { background:var(--surface); border:1px solid var(--border); padding:24px; margin-bottom:20px; position:relative; overflow:hidden; }
+  .ranking-block::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+  .ranking-eyebrow { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+  .ranking-statement { font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,4vw,34px); line-height:1.1; margin-bottom:16px; }
+  .ranking-statement em { color:var(--gold); font-style:normal; }
+  .percentile-bar-wrap { margin-bottom:8px; }
+  .percentile-bar-track { height:6px; background:var(--border); border-radius:3px; margin-bottom:6px; }
+  .percentile-bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--poor),var(--average),var(--gold),var(--elite)); transition:width 1.5s cubic-bezier(0.4,0,0.2,1); width:0%; }
+  .percentile-markers { display:flex; justify-content:space-between; font-size:10px; color:var(--grey); letter-spacing:0.05em; }
+  .ranking-context { font-size:13px; color:var(--grey); line-height:1.6; margin-top:12px; }
+  .ranking-context strong { color:var(--white); font-weight:500; }
+ 
+  /* PEAK COMPARISON */
+  .peak-section { margin-bottom:20px; }
+  .peak-title { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-bottom:14px; }
+  .peak-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .peak-card { background:var(--surface); border:1px solid var(--border); padding:14px; }
+  .peak-card-lift { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey); margin-bottom:8px; }
+  .peak-card-rows { display:flex; flex-direction:column; gap:4px; }
+  .peak-card-row { display:flex; align-items:center; gap:8px; font-size:12px; }
+  .peak-card-you-label { font-size:10px; letter-spacing:0.08em; text-transform:uppercase; width:40px; flex-shrink:0; }
+  .peak-card-you-label.you { color:var(--accent); }
+  .peak-card-you-label.elite { color:var(--elite); }
+  .peak-card-bar-wrap { flex:1; height:4px; background:var(--border); border-radius:2px; }
+  .peak-card-bar { height:100%; border-radius:2px; transition:width 1.2s cubic-bezier(0.4,0,0.2,1); width:0%; }
+  .peak-card-bar.you-bar { background:var(--accent); }
+  .peak-card-bar.elite-bar { background:var(--elite); }
+  .peak-card-val { font-size:11px; font-weight:500; color:var(--white); min-width:50px; text-align:right; flex-shrink:0; }
+ 
+  /* PILLAR BREAKDOWN */
+  .breakdown { margin-bottom:20px; display:flex; flex-direction:column; gap:12px; }
+  .breakdown-label { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-bottom:4px; }
+  .breakdown-row { display:flex; flex-direction:column; gap:6px; }
+  .breakdown-row-top { display:flex; justify-content:space-between; align-items:center; }
+  .breakdown-name { font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--white); }
+  .breakdown-pct { font-family:'Bebas Neue',sans-serif; font-size:17px; color:var(--accent); }
+  .breakdown-track { height:2px; background:var(--border); }
+  .breakdown-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-light)); box-shadow:0 0 8px rgba(232,52,26,0.4); transition:width 1.2s cubic-bezier(0.4,0,0.2,1); width:0%; }
+ 
+  /* LIFT CARDS */
+  .lift-breakdown { margin-bottom:20px; }
+  .lift-breakdown-title { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-bottom:12px; }
+  .lift-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .lift-card { background:var(--surface); border:1px solid var(--border); padding:12px 12px; position:relative; overflow:hidden; }
+  .lift-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; }
+  .t0::before { background:var(--poor); } .t1::before { background:var(--average); } .t2::before { background:var(--above); } .t3::before { background:var(--advanced); } .t4::before { background:var(--elite); }
+  .lift-name { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey); margin-bottom:5px; }
+  .lift-tier { font-family:'Bebas Neue',sans-serif; font-size:16px; margin-bottom:2px; }
+  .t0 .lift-tier { color:var(--poor); } .t1 .lift-tier { color:var(--average); } .t2 .lift-tier { color:var(--above); } .t3 .lift-tier { color:var(--advanced); } .t4 .lift-tier { color:var(--elite); }
+  .lift-val { font-size:10px; color:var(--grey); }
+ 
+  /* BLINDSPOTS */
+  .blindspots-section { margin-bottom:20px; }
+  .blindspots-title { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-bottom:14px; }
+  .blindspot-card { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); padding:16px 18px; margin-bottom:8px; }
+  .blindspot-header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .blindspot-tag { font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); background:var(--accent-dim); padding:3px 8px; flex-shrink:0; }
+  .blindspot-title { font-size:13px; font-weight:500; color:var(--white); }
+  .blindspot-body { font-size:13px; color:var(--grey); line-height:1.65; }
+ 
+  /* GOOD ENOUGH QUESTION */
+  .enough-block { text-align:center; padding:32px 24px; background:var(--surface); border:1px solid var(--border); margin-bottom:20px; position:relative; overflow:hidden; }
+  .enough-block::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+  .enough-question { font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,5vw,44px); line-height:1.05; margin-bottom:8px; }
+  .enough-sub { font-size:14px; color:var(--grey); line-height:1.6; margin-bottom:28px; max-width:440px; margin-left:auto; margin-right:auto; }
+  .enough-buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .enough-no { padding:16px 32px; background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:400; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+  .enough-no:hover { border-color:var(--grey); color:var(--white); }
+ 
+  /* CTA BLOCK */
+  .cta-block { border:1px solid var(--border); padding:32px; background:var(--surface); position:relative; overflow:hidden; display:none; }
+  .cta-block.visible { display:block; animation:fadeUp 0.4s ease forwards; }
+  .cta-block::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+  .cta-eyebrow { font-size:10px; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+  .cta-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(24px,5vw,38px); line-height:1.05; margin-bottom:12px; }
+  .cta-body { font-size:14px; color:var(--grey); line-height:1.7; margin-bottom:20px; }
+  .cta-includes { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
+  .cta-item { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--white); }
+  .cta-icon { color:var(--gold); flex-shrink:0; font-size:11px; margin-top:2px; }
+  .corner-mark { position:absolute; width:16px; height:16px; border-color:var(--gold); border-style:solid; opacity:0.4; }
+  .corner-mark.tl { top:10px; left:10px; border-width:1px 0 0 1px; }
+  .corner-mark.br { bottom:10px; right:10px; border-width:0 1px 1px 0; }
+ 
+  /* LOCKED PREVIEW ITEMS */
+  .bw-preview-locked { position:relative; overflow:hidden; }
+  .bw-locked-content { position:relative; }
+  .bw-locked-rows { display:flex; flex-direction:column; gap:4px; }
+  .bw-locked-row { height:12px; background:var(--border); border-radius:2px; opacity:0.5; }
+  .bw-locked-row:nth-child(1) { width:90%; }
+  .bw-locked-row:nth-child(2) { width:75%; }
+  .bw-locked-row:nth-child(3) { width:85%; }
+  .bw-locked-row:nth-child(4) { width:70%; }
+  .bw-locked-label { font-size:9px; color:var(--grey); letter-spacing:0.08em; margin-top:8px; text-align:center; }
+  .bw-preview-locked::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(8,8,8,0.1),rgba(8,8,8,0.4)); }
+ 
+  @media (max-width:520px) {
+    .app { padding:60px 16px 40px; }
+    .pillars-preview { grid-template-columns:1fr; }
+    .bw-preview-grid { grid-template-columns:1fr 1fr; }
+    .age-grid { grid-template-columns:repeat(2,1fr); }
+    .gate-input-row { flex-direction:column; }
+    .lift-grid { grid-template-columns:repeat(2,1fr); }
+    .peak-grid { grid-template-columns:1fr; }
+    .cta-block { padding:20px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+<div class="app">
+ 
+  <!-- INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="eyebrow">Men's Physical Assessment</div>
+    <h1 class="intro-title">The Peak<span>Performance<br>Test.</span></h1>
+    <p class="intro-sub">Real benchmarks. Real numbers. Find out exactly where your strength, conditioning and resilience rank against men your age — and what elite actually looks like.</p>
+    <div class="pillars-preview">
+      <div class="pillar-chip"><div class="pillar-dot"></div>5 strength lifts tested</div>
+      <div class="pillar-chip"><div class="pillar-dot"></div>5K conditioning benchmark</div>
+      <div class="pillar-chip"><div class="pillar-dot"></div>Body composition</div>
+      <div class="pillar-chip"><div class="pillar-dot"></div>Stress resilience</div>
+    </div>
+    <div class="intro-stats">
+      <div class="stat"><div class="stat-num">11</div><div class="stat-label">Tests</div></div>
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">Min to complete</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Pillars scored</div></div>
+    </div>
+    <div class="divider"></div>
+    <button class="btn-primary" onclick="showScreen('screen-bodyweight')">
+      Start the Test
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+ 
+  <!-- BODYWEIGHT + AGE -->
+  <div class="screen" id="screen-bodyweight">
+    <div class="eyebrow">Step 1 — Your Details</div>
+    <h2 class="bw-title">Enter Your<br>Bodyweight & Age</h2>
+    <p class="bw-sub">Your benchmarks are calculated against your bodyweight and compared against men your age. Every target is personalised to you.</p>
+    <div class="bw-row">
+      <input class="bw-input" id="bwInput" type="number" placeholder="80" min="40" max="250" oninput="updatePreview()"/>
+      <div class="bw-unit-toggle">
+        <button class="unit-btn active" id="btnKg" onclick="setUnit('kg')">KG</button>
+        <button class="unit-btn" id="btnLb" onclick="setUnit('lb')">LB</button>
+      </div>
+    </div>
+    <div class="age-section">
+      <div class="age-label">Age Range</div>
+      <div class="age-grid">
+        <button class="age-btn" onclick="setAge('18-25')">18–25</button>
+        <button class="age-btn" onclick="setAge('26-35')">26–35</button>
+        <button class="age-btn" onclick="setAge('36-45')">36–45</button>
+        <button class="age-btn" onclick="setAge('46+')">46+</button>
+      </div>
+    </div>
+    <div class="bw-error" id="bwError">Please enter your bodyweight and select your age range.</div>
+    <div class="bw-preview" id="bwPreview">
+      <div class="bw-preview-title">Your Personalised Benchmarks — 5 more unlock after your assessment</div>
+      <div class="bw-preview-grid" id="previewGrid"></div>
+    </div>
+    <div style="margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <button class="btn-secondary" style="margin-top:0" onclick="showScreen('screen-intro')">← Back</button>
+      <button class="btn-primary" onclick="startQuiz()">
+        Start My Assessment
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+ 
+  <!-- QUESTION -->
+  <div class="screen" id="screen-question">
+    <div class="q-header">
+      <div class="q-counter">QUESTION <span id="qNum">1</span> OF <span id="qTotal">11</span></div>
+      <div class="q-category" id="qCategory">Strength</div>
+    </div>
+    <h2 class="q-text" id="qText"></h2>
+    <p class="q-sub" id="qSub"></p>
+    <div class="q-bench-note" id="qBenchNote" style="display:none"></div>
+    <div class="options" id="optionsContainer"></div>
+    <div class="q-nav">
+      <button class="btn-secondary" style="margin-top:0" id="backBtn" onclick="prevQuestion()">← Back</button>
+      <button class="btn-primary" id="nextBtn" onclick="nextQuestion()" style="opacity:0.3;pointer-events:none">
+        Continue
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+ 
+  <!-- GATE -->
+  <div class="screen" id="screen-gate">
+    <div class="eyebrow">Almost There</div>
+    <h2 class="gate-title">Your Score<br>Is Ready.</h2>
+    <p class="gate-sub">Enter your details to unlock your full Peak Performance breakdown — including how you rank against men your age and your key performance blindspots.</p>
+    <div class="gate-score-tease">
+      <div class="gate-blur-score" id="gateBlurScore">34</div>
+      <div style="flex:1">
+        <div class="gate-tease-title">Your Peak Performance Score</div>
+        <div class="gate-tease-sub">Your percentile rank, lift breakdown, peak comparison and blindspot analysis</div>
+      </div>
+      <div style="font-size:20px;flex-shrink:0;margin-left:12px;">🔒</div>
+    </div>
+    <div class="gate-form">
+      <div class="gate-input-row">
+        <input class="gate-input" id="gateName" type="text" placeholder="First name" autocomplete="given-name"/>
+        <input class="gate-input" id="gateEmail" type="email" placeholder="Email address" autocomplete="email"/>
+      </div>
+      <div class="gate-error" id="gateError">Please enter a valid name and email address.</div>
+      <button class="btn-primary" id="gateBtn" onclick="submitGate()" style="width:100%;justify-content:center">
+        Unlock My Results
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <p class="gate-privacy">No spam — just your results and occasional performance insights. Unsubscribe anytime.</p>
+    <button class="btn-secondary" onclick="currentQ=questions.length-1;renderQuestion();showScreen('screen-question');">← Back to questions</button>
+  </div>
+ 
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+ 
+    <!-- SCORE -->
+    <div class="result-hero">
+      <div class="eyebrow" id="resultsEyebrow">Your Results</div>
+      <div class="result-score-ring">
+        <svg viewBox="0 0 160 160"><circle class="ring-bg" cx="80" cy="80" r="70"/><circle class="ring-fill" id="ringFill" cx="80" cy="80" r="70"/></svg>
+        <div class="ring-number"><div class="ring-num" id="scoreNum">0</div><div class="ring-label">/ <span id="maxLbl">55</span></div></div>
+      </div>
+      <h2 class="result-tier" id="tierName"></h2>
+      <p class="result-desc" id="tierDesc"></p>
+    </div>
+ 
+    <div class="divider"></div>
+ 
+    <!-- RANKING -->
+    <div class="ranking-block" id="rankingBlock">
+      <div class="ranking-eyebrow">How You Stack Up</div>
+      <div class="ranking-statement" id="rankingStatement"></div>
+      <div class="percentile-bar-wrap">
+        <div class="percentile-bar-track"><div class="percentile-bar-fill" id="percentileBar"></div></div>
+        <div class="percentile-markers"><span>Bottom 10%</span><span>Average</span><span>Top 10%</span></div>
+      </div>
+      <div class="ranking-context" id="rankingContext"></div>
+    </div>
+ 
+    <!-- PILLAR BREAKDOWN -->
+    <div class="breakdown">
+      <div class="breakdown-label">Pillar Breakdown</div>
+      <div class="breakdown-row"><div class="breakdown-row-top"><span class="breakdown-name">Strength</span><span class="breakdown-pct" id="pct1">0%</span></div><div class="breakdown-track"><div class="breakdown-fill" id="fill1"></div></div></div>
+      <div class="breakdown-row"><div class="breakdown-row-top"><span class="breakdown-name">Conditioning</span><span class="breakdown-pct" id="pct2">0%</span></div><div class="breakdown-track"><div class="breakdown-fill" id="fill2"></div></div></div>
+      <div class="breakdown-row"><div class="breakdown-row-top"><span class="breakdown-name">Body Composition</span><span class="breakdown-pct" id="pct3">0%</span></div><div class="breakdown-track"><div class="breakdown-fill" id="fill3"></div></div></div>
+      <div class="breakdown-row"><div class="breakdown-row-top"><span class="breakdown-name">Stress Resilience</span><span class="breakdown-pct" id="pct4">0%</span></div><div class="breakdown-track"><div class="breakdown-fill" id="fill4"></div></div></div>
+    </div>
+ 
+    <!-- LIFT RESULTS -->
+    <div class="lift-breakdown">
+      <div class="lift-breakdown-title">Your Lift Results</div>
+      <div class="lift-grid" id="liftGrid"></div>
+    </div>
+ 
+    <!-- PEAK COMPARISON -->
+    <div class="peak-section">
+      <div class="peak-title">Your Performance vs Peak — Men Your Age</div>
+      <div class="peak-grid" id="peakGrid"></div>
+    </div>
+ 
+    <div class="divider"></div>
+ 
+    <!-- BLINDSPOTS -->
+    <div class="blindspots-section">
+      <div class="blindspots-title">Your Performance Blindspots</div>
+      <div id="blindspotsContainer"></div>
+    </div>
+ 
+    <div class="divider"></div>
+ 
+    <!-- IS THIS GOOD ENOUGH -->
+    <div class="enough-block">
+      <h3 class="enough-question" id="enoughQuestion">Is This Good Enough For You?</h3>
+      <p class="enough-sub" id="enoughSub">You've seen where you stand and what's possible. The question now is what you want to do with that information.</p>
+      <div class="enough-buttons">
+        <button class="btn-primary gold" onclick="showCTA()">
+          Yes, show me how to close the gap
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="enough-no" onclick="dismissCTA()">Not right now</button>
+      </div>
+    </div>
+ 
+    <!-- CTA (hidden until yes) -->
+    <div class="cta-block" id="ctaBlock">
+      <div class="corner-mark tl"></div><div class="corner-mark br"></div>
+      <div class="cta-eyebrow">The High Performance Protocol</div>
+      <h3 class="cta-title">Let's Build Your Blueprint</h3>
+      <p class="cta-body">Book a free 30-minute strategy call. We'll go through your results, identify exactly what needs to change, and show you what a programme built around your physiology actually looks like.</p>
+      <div class="cta-includes">
+        <div class="cta-item"><span class="cta-icon">▸</span>Identify your biggest performance gap and how to fix it</div>
+        <div class="cta-item"><span class="cta-icon">▸</span>See if The High Performance Protocol is the right fit for you</div>
+        <div class="cta-item"><span class="cta-icon">▸</span>Free, no pressure, no pitch — just clarity</div>
+      </div>
+      <button class="btn-primary gold" onclick="window.open('https://calendly.com/ginoemusa/30min','_blank')">
+        Book Your Free Strategy Call
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+ 
+    
+    <div style="text-align:center;margin:0 0 20px;">
+      <p style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey);margin-bottom:12px;">Want to see what's possible?</p>
+      <a href="https://ginoemusa.com/results" target="_blank" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,0.3);padding:10px 20px;background:rgba(201,168,76,0.06);">
+        See Real Client Results &#8594;
+      </a>
+    </div>
+ 
+    <div style="border:1px solid var(--border);padding:20px 24px;background:var(--surface2);margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);margin-bottom:4px;">Also worth taking</div>
+        <div style="font-size:14px;font-weight:500;color:var(--white);">Want to know how your hormones and recovery stack up?</div>
+        <div style="font-size:12px;color:var(--grey);margin-top:2px;">Take the full Performance Assessment — energy, hormones, mental performance</div>
+      </div>
+      <a href="https://ginoemusa.com" target="_blank" style="display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);text-decoration:none;border:1px solid var(--border);padding:10px 16px;background:var(--surface);white-space:nowrap;flex-shrink:0;">
+        Take the Test &#8594;
+      </a>
+    </div>
+ 
+    <button class="btn-secondary" onclick="restartQuiz()" style="margin-top:28px">↺ Retake the test</button>
+  </div>
+ 
+</div>
+<script>
+let unit='kg', bodyweightKg=0, ageRange='', questions=[], currentQ=0, answers=[];
+ 
+function setUnit(u){
+  unit=u;
+  document.getElementById('btnKg').classList.toggle('active',u==='kg');
+  document.getElementById('btnLb').classList.toggle('active',u==='lb');
+  updatePreview();
+}
+ 
+function setAge(a){
+  ageRange=a;
+  document.querySelectorAll('.age-btn').forEach(b=>b.classList.toggle('active',b.textContent.replace('–','-')===a||b.textContent===a));
+}
+ 
+function getKg(){
+  const v=parseFloat(document.getElementById('bwInput').value);
+  if(isNaN(v)||v<30)return null;
+  return unit==='kg'?v:v*0.453592;
+}
+ 
+function fmt(kg){ return unit==='kg'?Math.round(kg)+'kg':Math.round(kg*2.20462)+'lb'; }
+ 
+function updatePreview(){
+  const kg=getKg(); const preview=document.getElementById('bwPreview');
+  if(!kg){preview.classList.remove('visible');return;}
+  bodyweightKg=kg; preview.classList.add('visible');
+ 
+  // Visible lifts — shown to create curiosity
+  const visible=[
+    {name:'Squat',rows:[['Average',fmt(kg*1.25)],['Above Avg',fmt(kg*1.75)],['Advanced',fmt(kg*2.0)],['Elite',fmt(kg*2.5)+'+'] ]},
+    {name:'5K Run',rows:[['Average','30–35 min'],['Above Avg','25–30 min'],['Advanced','Sub 20'],['Elite','Sub 17'] ]},
+  ];
+ 
+  // Hidden lifts — locked until results
+  const hidden=['Bench Press','Deadlift','Pull Ups','OHP','Body Fat %'];
+ 
+  const visibleHTML = visible.map(l=>`
+    <div class="bw-preview-item">
+      <div class="bw-preview-lift">${l.name}</div>
+      <div class="bw-preview-tiers">${l.rows.map(r=>`<div class="bw-preview-tier"><span class="bw-preview-tier-label">${r[0]}</span><span class="bw-preview-tier-val">${r[1]}</span></div>`).join('')}</div>
+    </div>`).join('');
+ 
+  const hiddenHTML = hidden.map(name=>`
+    <div class="bw-preview-item bw-preview-locked">
+      <div class="bw-preview-lift">${name}</div>
+      <div class="bw-locked-content">
+        <div class="bw-locked-rows">
+          <div class="bw-locked-row"></div>
+          <div class="bw-locked-row"></div>
+          <div class="bw-locked-row"></div>
+          <div class="bw-locked-row"></div>
+        </div>
+        <div class="bw-locked-label">🔒 Unlocks after assessment</div>
+      </div>
+    </div>`).join('');
+ 
+  document.getElementById('previewGrid').innerHTML = visibleHTML + hiddenHTML;
+}
+ 
+function buildQuestions(kg){
+  const f=r=>fmt(kg*r);
+  return [
+    {category:'Strength — Squat',pillar:0,lift:'Squat',text:'What is your best squat (1 rep max or estimated)?',sub:'Include bar weight. Use front squat or goblet squat equivalent if needed.',bench:`Your bodyweight: ${fmt(kg)} — all targets calculated for you`,
+      options:[{text:'Less than 1.25x bodyweight',metric:`Below ${f(1.25)}`,tier:'Poor',ti:0,score:0},{text:'1.25x – 1.74x bodyweight',metric:`${f(1.25)} – ${f(1.74)}`,tier:'Average',ti:1,score:2},{text:'1.75x – 1.99x bodyweight',metric:`${f(1.75)} – ${f(1.99)}`,tier:'Above Average',ti:2,score:3},{text:'2x – 2.49x bodyweight',metric:`${f(2.0)} – ${f(2.49)}`,tier:'Advanced',ti:3,score:4},{text:'2.5x bodyweight or more',metric:`${f(2.5)}+`,tier:'Elite',ti:4,score:5}]},
+    {category:'Strength — Bench Press',pillar:0,lift:'Bench Press',text:'What is your best bench press (1 rep max or estimated)?',sub:'Flat barbell bench. Estimate barbell equivalent if using dumbbells.',bench:`Your bodyweight: ${fmt(kg)}`,
+      options:[{text:'Less than bodyweight',metric:`Below ${fmt(kg)}`,tier:'Poor',ti:0,score:0},{text:'Around bodyweight',metric:`Around ${fmt(kg)}`,tier:'Average',ti:1,score:2},{text:'1.25x – 1.49x bodyweight',metric:`${f(1.25)} – ${f(1.49)}`,tier:'Above Average',ti:2,score:3},{text:'1.5x – 1.99x bodyweight',metric:`${f(1.5)} – ${f(1.99)}`,tier:'Advanced',ti:3,score:4},{text:'2x bodyweight or more',metric:`${f(2.0)}+`,tier:'Elite',ti:4,score:5}]},
+    {category:'Strength — Deadlift',pillar:0,lift:'Deadlift',text:'What is your best deadlift (1 rep max or estimated)?',sub:'Conventional or sumo. Include bar weight.',bench:`Your bodyweight: ${fmt(kg)}`,
+      options:[{text:'Less than bodyweight',metric:`Below ${fmt(kg)}`,tier:'Poor',ti:0,score:0},{text:'1x – 1.49x bodyweight',metric:`${fmt(kg)} – ${f(1.49)}`,tier:'Average',ti:1,score:2},{text:'1.5x – 1.99x bodyweight',metric:`${f(1.5)} – ${f(1.99)}`,tier:'Above Average',ti:2,score:3},{text:'2x – 2.49x bodyweight',metric:`${f(2.0)} – ${f(2.49)}`,tier:'Advanced',ti:3,score:4},{text:'3x bodyweight or more',metric:`${f(3.0)}+`,tier:'Elite',ti:4,score:5}]},
+    {category:'Strength — Pull Ups',pillar:0,lift:'Pull Ups',text:'What is your best pull up performance?',sub:'Strict full range — dead hang to chin over bar. No kipping.',bench:`Your bodyweight: ${fmt(kg)}`,
+      options:[{text:'Cannot complete bodyweight pull ups',metric:'Less than 1 rep',tier:'Poor',ti:0,score:0},{text:'10 reps at bodyweight',metric:`10 reps × ${fmt(kg)}`,tier:'Average',ti:1,score:2},{text:'5 reps with 20% added weight',metric:`5 reps × ${f(1.2)}`,tier:'Above Average',ti:2,score:3},{text:'5 reps with 50% added weight',metric:`5 reps × ${f(1.5)}`,tier:'Advanced',ti:3,score:4},{text:'5 reps with bodyweight added',metric:`5 reps × ${f(2.0)}`,tier:'Elite',ti:4,score:5}]},
+    {category:'Strength — Overhead Press',pillar:0,lift:'OHP',text:'What is your best overhead press (1 rep max or estimated)?',sub:'Standing strict press — no leg drive. Include bar weight.',bench:`Your bodyweight: ${fmt(kg)}`,
+      options:[{text:'Less than 0.5x bodyweight',metric:`Below ${f(0.5)}`,tier:'Poor',ti:0,score:0},{text:'0.5x – 0.74x bodyweight',metric:`${f(0.5)} – ${f(0.74)}`,tier:'Average',ti:1,score:2},{text:'0.75x – 0.99x bodyweight',metric:`${f(0.75)} – ${f(0.99)}`,tier:'Above Average',ti:2,score:3},{text:'1x – 1.19x bodyweight',metric:`${f(1.0)} – ${f(1.19)}`,tier:'Advanced',ti:3,score:4},{text:'1.2x bodyweight or more',metric:`${f(1.2)}+`,tier:'Elite',ti:4,score:5}]},
+    {category:'Conditioning — 5K Run',pillar:1,lift:'5K Run',text:'What is your best 5K run time?',sub:"Flat course, recent performance. Estimate based on your pace if you haven't run one recently.",bench:null,
+      options:[{text:'Over 35 minutes',metric:'35:00+',tier:'Poor',ti:0,score:0},{text:'30 – 35 minutes',metric:'30:00 – 35:00',tier:'Average',ti:1,score:2},{text:'25 – 30 minutes',metric:'25:00 – 30:00',tier:'Above Average',ti:2,score:3},{text:'20 – 25 minutes',metric:'20:00 – 25:00',tier:'Advanced',ti:3,score:4},{text:'Under 20 minutes',metric:'Sub 20:00',tier:'Elite',ti:4,score:5}]},
+    {category:'Body Composition',pillar:2,lift:'Body Composition',text:'Which best describes your current body composition?',sub:'Be honest — this is the single most visible indicator of how your physiology is functioning.',bench:null,
+      options:[{text:'Sub 10% body fat — lean, visible abs year round',metric:'Sub 10% — Elite',tier:'Elite',ti:4,score:5},{text:'10–15% body fat — lean with visible definition',metric:'10–15% — Optimal',tier:'Optimal',ti:3,score:4},{text:'15–19% body fat — some definition, soft around the middle',metric:'15–19% — Above Average',tier:'Above Average',ti:2,score:3},{text:'20–25% body fat — carrying noticeable excess, little definition',metric:'20–25% — Average',tier:'Average',ti:1,score:2},{text:'26–30% body fat — significant excess, particularly midsection',metric:'26–30% — Below Average',tier:'Below Average',ti:0,score:1},{text:'30%+ body fat — significant excess affecting daily performance',metric:'30%+ — Poor',tier:'Poor',ti:0,score:0}]},
+    {category:'Stress Resilience',pillar:3,lift:null,text:'How well does your body handle periods of high stress or pressure?',sub:'Chronic stress directly suppresses fat loss, muscle growth and recovery — often more than training itself.',bench:null,
+      options:[{text:"I'm in a constant state of stress and never switch off",metric:null,tier:null,ti:0,score:0},{text:'Poorly — stress hits me hard and recovery takes a long time',metric:null,tier:null,ti:1,score:2},{text:'Reasonably — I cope but notice it taking a toll over time',metric:null,tier:null,ti:2,score:3},{text:'Very well — I stay sharp and bounce back quickly',metric:null,tier:null,ti:3,score:5}]},
+    {category:'Stress Resilience',pillar:3,lift:null,text:'How does stress affect your training and physical results?',sub:"The stress-performance connection is one of the most underestimated factors in men's physique.",bench:null,
+      options:[{text:'Severe — stress completely kills my motivation and progress',metric:null,tier:null,ti:0,score:0},{text:'Big impact — stress derails my training noticeably',metric:null,tier:null,ti:1,score:2},{text:'Some impact — training slips but I get back on track',metric:null,tier:null,ti:2,score:3},{text:'Minimal — I train through stress and maintain my results',metric:null,tier:null,ti:3,score:5}]},
+    {category:'Body Responsiveness',pillar:2,lift:null,text:'When you train hard and eat well, how does your body respond?',sub:'Poor responsiveness is often the first sign something deeper is going on.',bench:null,
+      options:[{text:'Not at all — completely plateaued despite consistent effort',metric:null,tier:null,ti:0,score:0},{text:"Barely — I put in the work but my body doesn't change",metric:null,tier:null,ti:1,score:2},{text:'Slowly — progress comes but takes longer than it should',metric:null,tier:null,ti:2,score:3},{text:'Very well — I see clear changes within a few weeks',metric:null,tier:null,ti:3,score:5}]},
+    {category:'Body Responsiveness',pillar:2,lift:null,text:'How easy do you find it to lose body fat when focused on it?',sub:'Stubborn fat — especially around the midsection — is a direct signal of hormonal and metabolic health.',bench:null,
+      options:[{text:'Almost impossible — especially around my stomach and chest',metric:null,tier:null,ti:0,score:0},{text:'Difficult — I cut calories and train but it barely shifts',metric:null,tier:null,ti:1,score:2},{text:'Takes effort but it moves eventually',metric:null,tier:null,ti:2,score:3},{text:'Fairly easy — a few weeks of dialling in and I see results',metric:null,tier:null,ti:3,score:5}]},
+  ];
+}
+ 
+// Percentile data by age range — based on population fitness research
+const PERCENTILES = {
+  '18-25':{ poor:[0,20], avg:[21,35], above:[36,43], advanced:[44,49], elite:[50,55] },
+  '26-35':{ poor:[0,18], avg:[19,32], above:[33,41], advanced:[42,47], elite:[48,55] },
+  '36-45':{ poor:[0,16], avg:[17,29], above:[30,39], advanced:[40,46], elite:[47,55] },
+  '46+':  { poor:[0,14], avg:[15,26], above:[27,37], advanced:[38,45], elite:[46,55] },
+};
+ 
+function getPercentile(score, age){
+  const p = PERCENTILES[age] || PERCENTILES['26-35'];
+  if(score <= p.poor[1]) return Math.round(5 + (score/p.poor[1])*15);
+  if(score <= p.avg[1])  return Math.round(20 + ((score-p.avg[0])/(p.avg[1]-p.avg[0]))*25);
+  if(score <= p.above[1])return Math.round(45 + ((score-p.above[0])/(p.above[1]-p.above[0]))*20);
+  if(score <= p.advanced[1])return Math.round(65 + ((score-p.advanced[0])/(p.advanced[1]-p.advanced[0]))*20);
+  return Math.round(85 + ((score-p.elite[0])/(p.elite[1]-p.elite[0]))*12);
+}
+ 
+// Elite benchmarks by age for peak comparison
+function getEliteBenchmarks(kg, age){
+  const ageMultipliers = { '18-25':1.0, '26-35':0.97, '36-45':0.92, '46+':0.85 };
+  const m = ageMultipliers[age] || 1.0;
+  return {
+    squat: fmt(kg*2.5*m), bench: fmt(kg*2.0*m), deadlift: fmt(kg*3.0*m),
+    pullups: `${fmt(kg*2.0*m)} ×5`, ohp: fmt(kg*1.2*m), run5k: age==='46+' ? 'Sub 22' : age==='36-45' ? 'Sub 20' : 'Sub 18',
+    bodyfat: age==='46+' ? '12–15%' : '8–12%'
+  };
+}
+ 
+const BLINDSPOTS = {
+  squat_low: { tag:'Strength Gap', title:'Your lower body power is a major limitation', body:"Most men neglect the squat as they age or when aesthetics take priority. But lower body strength is your biggest driver of anabolic hormones — a weak squat suppresses testosterone production, reduces metabolic rate and limits muscle-building capacity across your entire body. This isn't just a leg day problem." },
+  bench_low: { tag:'Strength Gap', title:'Your pressing strength is below where it needs to be', body:"Bench press performance correlates directly with upper body muscle density and shoulder stability. Below bodyweight pressing at your age signals either a significant lack of training volume, poor programme design, or underlying recovery issues. Either way it's leaving mass and strength on the table." },
+  deadlift_low: { tag:'Strength Gap', title:'Your posterior chain is your biggest structural weakness', body:"The deadlift measures your entire posterior chain — the most important group of muscles in your body for posture, power and longevity. A weak deadlift typically indicates chronic under-recruitment of the glutes and hamstrings, which also directly suppresses athletic output and metabolic function." },
+  pullups_low: { tag:'Strength Gap', title:'Your relative strength-to-bodyweight ratio is holding you back', body:"Pull up performance is one of the purest measures of functional strength. If you can't move your own bodyweight efficiently, adding external load is irrelevant. Low pull up numbers typically signal either excess body fat relative to muscle, or a significant upper back strength deficit — usually both." },
+  ohp_low: { tag:'Blindspot', title:'Overhead pressing is the most overlooked strength marker', body:"Most men skip the overhead press or never push it seriously. It's arguably the single best indicator of shoulder health, upper body balance and neuromuscular efficiency. A weak OHP is a leading predictor of shoulder injuries down the line — and at sub-bodyweight levels, it's a significant structural red flag." },
+  run_low: { tag:'Conditioning Gap', title:'Your cardiovascular base is limiting your results', body:"Poor 5K performance signals an underdeveloped aerobic base. This isn't about being a runner — it's about your body's ability to recover between sets, utilise fat for fuel, and sustain output under fatigue. Men with a weak cardiovascular base plateau faster, recover slower, and carry more stubborn body fat as a direct consequence." },
+  bodyfat_high: { tag:'Composition Gap', title:'Your body fat is the most visible performance leak', body:"Carrying excess body fat — particularly around the midsection — is a direct indicator of insulin resistance and hormonal imbalance. Elevated body fat suppresses testosterone, increases oestrogen, blunts muscle-building signals, and chronically elevates cortisol. No training programme can fully compensate for this. It has to be addressed at the root." },
+  stress_high: { tag:'Hidden Blindspot', title:'Stress is suppressing your results more than your training is', body:"This is the most common blindspot in high-performing men. Chronic stress elevates cortisol — which directly breaks down muscle tissue, drives fat storage around the abdomen, suppresses testosterone, and destroys sleep quality. You can train and eat perfectly and still not progress if cortisol is chronically elevated. Most coaches never address this." },
+  responsiveness_low: { tag:'Biological Blindspot', title:"Your body isn't responding — and training harder won't fix it", body:"When a well-trained man stops responding to his programme, the cause is almost never lack of effort. It's biological. Poor responsiveness typically signals hormonal suppression, thyroid underfunction, or metabolic adaptation. These aren't fixable with a new programme or more discipline — they require understanding what your body is actually doing." },
+};
+ 
+function getBlindspots(q, a){
+  const spots = [];
+  const liftQs = ['squat','bench','deadlift','pullups','ohp','run5k'];
+  const liftMap = [0,1,2,3,4,5];
+  // Check lift scores
+  if(a[0]!==null && q[0].options[a[0]].ti<=1) spots.push(BLINDSPOTS.squat_low);
+  if(a[1]!==null && q[1].options[a[1]].ti<=1) spots.push(BLINDSPOTS.bench_low);
+  if(a[2]!==null && q[2].options[a[2]].ti<=1) spots.push(BLINDSPOTS.deadlift_low);
+  if(a[3]!==null && q[3].options[a[3]].ti<=1) spots.push(BLINDSPOTS.pullups_low);
+  if(a[4]!==null && q[4].options[a[4]].ti<=1) spots.push(BLINDSPOTS.ohp_low);
+  if(a[5]!==null && q[5].options[a[5]].ti<=1) spots.push(BLINDSPOTS.run_low);
+  if(a[6]!==null && q[6].options[a[6]].ti<=1) spots.push(BLINDSPOTS.bodyfat_high);
+  if(a[7]!==null && q[7].options[a[7]].score<=2) spots.push(BLINDSPOTS.stress_high);
+  if(a[9]!==null && q[9].options[a[9]].score<=2) spots.push(BLINDSPOTS.responsiveness_low);
+  // Return top 3 most impactful
+  return spots.slice(0,3);
+}
+ 
+const TIERS = [
+  {min:0,max:16,name:'UNTAPPED',color:'#E8341A',
+   desc:"Your results tell us something important — not that you're behind, but that there's a significant amount of physical potential that hasn't been unlocked yet. Most men in this range are working hard but working against their own biology without knowing it. That's fixable.",
+   enoughQ:"Ready to Find Out What Your Body Is Actually Capable Of?",
+   enoughSub:"Your score shows untapped potential across multiple pillars. The gap between where you are now and where you could be is bigger than you think — and more closeable than it feels."},
+  {min:17,max:28,name:'BUILDING',color:'#d4801a',
+   desc:"You have a real foundation to work from. Some pillars are performing well — others are quietly holding back the whole system. The good news is that men who score here typically see the fastest and most dramatic improvements once the right areas are targeted.",
+   enoughQ:"Your Foundation Is There — Is It Time to Build on It?",
+   enoughSub:"You're not starting from zero. You're starting from a base that, with the right focus, can move fast. The question is whether you want to find out exactly what's been holding you back."},
+  {min:29,max:39,name:'IN PROGRESS',color:'#c9a84c',
+   desc:"You're performing well in some areas while others are quietly creating a ceiling. Men at this level often feel like they're doing everything right — and they mostly are. But there are specific gaps that, once closed, unlock a completely different level of output.",
+   enoughQ:"You're Close — Is Good Enough, Enough?",
+   enoughSub:"The difference between where you are and where you want to be isn't as large as it might feel. But closing that gap requires knowing exactly which levers to pull."},
+  {min:40,max:55,name:'HIGH PERFORMER',color:'#27ae60',
+   desc:"You're operating at a high level across most pillars. The gap between where you are and your absolute peak is narrow — but at this level, that gap determines everything.",
+   enoughQ:"You're Already Ahead — Is Staying There Good Enough?",
+   enoughSub:"High performers plateau too. The next level isn't about more effort — it's about precision. Do you want to find out exactly where your edge is?"},
+];
+ 
+function startQuiz(){
+  const kg=getKg();
+  if(!kg||!ageRange){document.getElementById('bwError').classList.add('visible');return;}
+  document.getElementById('bwError').classList.remove('visible');
+  bodyweightKg=kg;
+  questions=buildQuestions(kg);
+  answers=new Array(questions.length).fill(null);
+  currentQ=0;
+  document.getElementById('qTotal').textContent=questions.length;
+  showScreen('screen-question');
+  renderQuestion();
+  updateProgress();
+}
+ 
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation='none';el.offsetHeight;el.style.animation='';
+}
+ 
+function renderQuestion(){
+  const q=questions[currentQ];
+  document.getElementById('qNum').textContent=currentQ+1;
+  document.getElementById('qCategory').textContent=q.category;
+  document.getElementById('qText').textContent=q.text;
+  document.getElementById('qSub').textContent=q.sub;
+  const noteEl=document.getElementById('qBenchNote');
+  if(q.bench){noteEl.textContent=q.bench;noteEl.style.display='block';}else{noteEl.style.display='none';}
+  const container=document.getElementById('optionsContainer');
+  container.innerHTML='';
+  const L=['A','B','C','D','E','F'];
+  q.options.forEach((opt,i)=>{
+    const div=document.createElement('div');
+    div.className='option'+(answers[currentQ]===i?' selected':'');
+    div.innerHTML=`<div class="option-letter">${L[i]}</div><div class="option-content"><div class="option-text">${opt.text}</div>${opt.metric?`<div class="option-metric">${opt.metric}</div>`:''}${opt.tier?`<div class="option-tier-badge">${opt.tier}</div>`:''}</div><div class="option-score">${opt.score}</div>`;
+    div.onclick=()=>selectOption(i);
+    container.appendChild(div);
+  });
+  const nb=document.getElementById('nextBtn'),bb=document.getElementById('backBtn');
+  if(answers[currentQ]!==null){nb.style.opacity='1';nb.style.pointerEvents='auto';}else{nb.style.opacity='0.3';nb.style.pointerEvents='none';}
+  nb.innerHTML=currentQ===questions.length-1?'See My Results <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>':'Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+  bb.style.visibility=currentQ===0?'hidden':'visible';
+}
+ 
+function selectOption(i){
+  answers[currentQ]=i;
+  document.querySelectorAll('.option').forEach((el,idx)=>el.classList.toggle('selected',idx===i));
+  const nb=document.getElementById('nextBtn');nb.style.opacity='1';nb.style.pointerEvents='auto';
+}
+ 
+function nextQuestion(){
+  if(answers[currentQ]===null)return;
+  if(currentQ<questions.length-1){currentQ++;renderQuestion();updateProgress();}else{showGate();}
+}
+ 
+function prevQuestion(){if(currentQ>0){currentQ--;renderQuestion();updateProgress();}}
+ 
+function updateProgress(){document.getElementById('progressBar').style.width=(currentQ/questions.length*100)+'%';}
+ 
+function showGate(){
+  const total=answers.reduce((s,a,i)=>s+(a!==null?questions[i].options[a].score:0),0);
+  document.getElementById('gateBlurScore').textContent=total;
+  showScreen('screen-gate');
+  document.getElementById('progressBar').style.width='95%';
+}
+ 
+function calcResults(){
+  const total=answers.reduce((s,a,i)=>s+(a!==null?questions[i].options[a].score:0),0);
+  const maxScore=questions.reduce((s,q)=>s+Math.max(...q.options.map(o=>o.score)),0);
+  const pillars=[0,0,0,0],pillarMax=[0,0,0,0];
+  questions.forEach((q,i)=>{const mx=Math.max(...q.options.map(o=>o.score));pillars[q.pillar]+=(answers[i]!==null?questions[i].options[answers[i]].score:0);pillarMax[q.pillar]+=mx;});
+  const tier=TIERS.find(t=>total>=t.min&&total<=t.max)||TIERS[0];
+  return{total,maxScore,pillars,pillarMax,tier};
+}
+ 
+async function submitGate(){
+  const name=document.getElementById('gateName').value.trim();
+  const email=document.getElementById('gateEmail').value.trim();
+  const errorEl=document.getElementById('gateError');
+  const emailValid=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if(!name||!emailValid){errorEl.classList.add('visible');document.getElementById('gateName').classList.toggle('error',!name);document.getElementById('gateEmail').classList.toggle('error',!emailValid);return;}
+  errorEl.classList.remove('visible');
+  const btn=document.getElementById('gateBtn');
+  btn.style.opacity='0.6';btn.style.pointerEvents='none';
+  btn.innerHTML='Unlocking... <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+  const{total,maxScore,pillars,pillarMax,tier}=calcResults();
+  const pcts=pillars.map((p,i)=>Math.round((p/pillarMax[i])*100)+'%');
+  const percentile=getPercentile(total,ageRange);
+  const L=['A','B','C','D','E','F'];
+  const answerLines=questions.map((q,i)=>{const sel=answers[i]!==null?L[answers[i]]+') '+q.options[answers[i]].text+(q.options[answers[i]].metric?' ('+q.options[answers[i]].metric+')':''):'Not answered';return(i+1)+'. '+q.text+'\n   \u2192 '+sel;}).join('\n\n');
+  try{
+    const iframe=document.createElement('iframe');iframe.name='kit-iframe';iframe.style.display='none';document.body.appendChild(iframe);
+    const form=document.createElement('form');form.method='POST';form.action='https://app.kit.com/forms/9309210/subscriptions';form.target='kit-iframe';form.style.display='none';
+    [['email_address',email],['first_name',name.split(' ')[0]]].forEach(([k,v])=>{const inp=document.createElement('input');inp.type='hidden';inp.name=k;inp.value=v;form.appendChild(inp);});
+    document.body.appendChild(form);form.submit();
+    setTimeout(()=>{document.body.removeChild(form);document.body.removeChild(iframe);},3000);
+  }catch(e){console.warn('Kit:',e);}
+  emailjs.send('service_xibtquv','template_zjyum8j',{
+    name,email,score:total+' / '+maxScore,tier:tier.name,
+    energy:pcts[0],hormonal:pcts[1],body:pcts[2],mental:pcts[3],
+    answers:`Bodyweight: ${fmt(bodyweightKg)} | Age: ${ageRange} | Percentile: Top ${100-percentile}%\n\n${answerLines}`
+  }).catch(e=>console.warn('EmailJS:',e));
+  showResults(name);
+}
+ 
+function showResults(name){
+  document.getElementById('progressBar').style.width='100%';
+  const{total,maxScore,pillars,pillarMax,tier}=calcResults();
+  const percentile=getPercentile(total,ageRange);
+  const topPct=Math.max(1,100-percentile);
+  showScreen('screen-results');
+  document.getElementById('resultsEyebrow').textContent=name?name+"'s Results":'Your Results';
+  document.getElementById('maxLbl').textContent=maxScore;
+ 
+  // Score ring
+  setTimeout(()=>{const c=2*Math.PI*70;document.getElementById('ringFill').style.strokeDashoffset=c-(total/maxScore)*c;document.getElementById('ringFill').style.stroke=tier.color;},100);
+  let count=0;const iv=setInterval(()=>{count=Math.min(count+1,total);document.getElementById('scoreNum').textContent=count;if(count>=total)clearInterval(iv);},30);
+ 
+  // Tier
+  document.getElementById('tierName').textContent=tier.name;document.getElementById('tierName').style.color=tier.color;
+  document.getElementById('tierDesc').textContent=tier.desc;
+ 
+  // Ranking
+  document.getElementById('rankingStatement').innerHTML=`You're in the <em>top ${topPct}%</em> of men aged ${ageRange}`;
+  const rankCtx = percentile > 70
+    ? `<strong>Above average</strong> for your age group. You have a strong foundation — the gap to elite is measurable and closeable with the right focus.`
+    : percentile > 50
+    ? `<strong>Around average</strong> for your age group. There's meaningful room to move — and men who score here typically respond fast once the right pillars are targeted.`
+    : percentile > 30
+    ? `<strong>Below average</strong> for your age group — but that's information, not a verdict. Most men here are training consistently and simply haven't found what's been working against them yet.`
+    : `<strong>Significant untapped potential</strong> across multiple pillars. This score almost never reflects a lack of effort — it reflects a mismatch between what you're doing and what your body actually needs.`;
+  document.getElementById('rankingContext').innerHTML = rankCtx;
+  setTimeout(()=>{document.getElementById('percentileBar').style.width=percentile+'%';},300);
+ 
+  // Pillars
+  setTimeout(()=>{['fill1','fill2','fill3','fill4'].forEach((id,i)=>{const p=Math.round((pillars[i]/pillarMax[i])*100);document.getElementById(id).style.width=p+'%';document.getElementById('pct'+(i+1)).textContent=p+'%';});},300);
+ 
+  // Lift cards
+  const tierLabels=['Poor','Average','Above Avg','Advanced','Elite'];
+  const liftQs=questions.filter(q=>q.lift);
+  document.getElementById('liftGrid').innerHTML=liftQs.map(q=>{const qi=questions.indexOf(q);const a=answers[qi];const opt=a!==null?q.options[a]:null;const ti=opt?opt.ti:0;return`<div class="lift-card t${ti}"><div class="lift-name">${q.lift}</div><div class="lift-tier t${ti}">${opt?tierLabels[ti]:'—'}</div><div class="lift-val">${opt&&opt.metric?opt.metric:''}</div></div>`;}).join('');
+ 
+  // Peak comparison
+  const elite=getEliteBenchmarks(bodyweightKg,ageRange);
+  const liftQsList=questions.filter(q=>q.lift);
+  const peakData=[
+    {name:'Squat',yourTi:answers[0]!==null?questions[0].options[answers[0]].ti:0,yourVal:answers[0]!==null?questions[0].options[answers[0]].metric:'—',eliteVal:elite.squat,yourPct:(answers[0]!==null?questions[0].options[answers[0]].ti:0)/4*100,elitePct:100},
+    {name:'Bench',yourTi:answers[1]!==null?questions[1].options[answers[1]].ti:0,yourVal:answers[1]!==null?questions[1].options[answers[1]].metric:'—',eliteVal:elite.bench,yourPct:(answers[1]!==null?questions[1].options[answers[1]].ti:0)/4*100,elitePct:100},
+    {name:'Deadlift',yourTi:answers[2]!==null?questions[2].options[answers[2]].ti:0,yourVal:answers[2]!==null?questions[2].options[answers[2]].metric:'—',eliteVal:elite.deadlift,yourPct:(answers[2]!==null?questions[2].options[answers[2]].ti:0)/4*100,elitePct:100},
+    {name:'OHP',yourTi:answers[4]!==null?questions[4].options[answers[4]].ti:0,yourVal:answers[4]!==null?questions[4].options[answers[4]].metric:'—',eliteVal:elite.ohp,yourPct:(answers[4]!==null?questions[4].options[answers[4]].ti:0)/4*100,elitePct:100},
+    {name:'5K Run',yourTi:answers[5]!==null?questions[5].options[answers[5]].ti:0,yourVal:answers[5]!==null?questions[5].options[answers[5]].metric:'—',eliteVal:elite.run5k,yourPct:(answers[5]!==null?questions[5].options[answers[5]].ti:0)/4*100,elitePct:100},
+    {name:'Body Fat',yourTi:answers[6]!==null?questions[6].options[answers[6]].ti:0,yourVal:answers[6]!==null?questions[6].options[answers[6]].metric:'—',eliteVal:elite.bodyfat,yourPct:(answers[6]!==null?questions[6].options[answers[6]].ti:0)/4*100,elitePct:100},
+  ];
+  document.getElementById('peakGrid').innerHTML=peakData.map(d=>`
+    <div class="peak-card">
+      <div class="peak-card-lift">${d.name}</div>
+      <div class="peak-card-rows">
+        <div class="peak-card-row">
+          <span class="peak-card-you-label you">You</span>
+          <div class="peak-card-bar-wrap"><div class="peak-card-bar you-bar" data-pct="${d.yourPct}"></div></div>
+          <span class="peak-card-val">${d.yourVal}</span>
+        </div>
+        <div class="peak-card-row">
+          <span class="peak-card-you-label elite">Peak</span>
+          <div class="peak-card-bar-wrap"><div class="peak-card-bar elite-bar" data-pct="${d.elitePct}"></div></div>
+          <span class="peak-card-val">${d.eliteVal}</span>
+        </div>
+      </div>
+    </div>`).join('');
+  setTimeout(()=>{document.querySelectorAll('.peak-card-bar').forEach(b=>{b.style.width=b.dataset.pct+'%';});},400);
+ 
+  // Blindspots
+  const spots=getBlindspots(questions,answers);
+  document.getElementById('blindspotsContainer').innerHTML=spots.length>0
+    ?spots.map(s=>`<div class="blindspot-card"><div class="blindspot-header"><span class="blindspot-tag">${s.tag}</span><span class="blindspot-title">${s.title}</span></div><div class="blindspot-body">${s.body}</div></div>`).join('')
+    :`<div class="blindspot-card"><div class="blindspot-header"><span class="blindspot-tag">High Performer</span><span class="blindspot-title">Your foundation is strong — the next gains come from precision</span></div><div class="blindspot-body">At your level, the difference between good and elite isn't visible to most coaches. It lives in your recovery protocols, your hormonal profile, and the subtle inefficiencies that only data can reveal.</div></div>`;
+ 
+  // Enough question — personalised by tier and percentile
+  const enoughQ = tier.enoughQ || `Is Being in the Top ${topPct}% Good Enough For You?`;
+  const enoughSub = tier.enoughSub || "You now know exactly where you stand and what elite looks like. The gap is clear. The question is — what are you going to do about it?";
+  document.getElementById('enoughQuestion').textContent = enoughQ;
+  document.getElementById('enoughSub').textContent = enoughSub;
+}
+ 
+function showCTA(){
+  document.getElementById('ctaBlock').classList.add('visible');
+  document.querySelector('.enough-block').style.display='none';
+  setTimeout(()=>document.getElementById('ctaBlock').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+ 
+function dismissCTA(){
+  document.querySelector('.enough-block').style.opacity='0.4';
+  document.querySelector('.enough-buttons').innerHTML='<p style="font-size:13px;color:var(--grey);margin-top:8px;">No problem. Your results are saved above. Come back when you\'re ready.</p>';
+}
+ 
+function restartQuiz(){
+  currentQ=0;answers=[];ageRange='';
+  document.getElementById('progressBar').style.width='0%';
+  document.getElementById('gateName').value='';document.getElementById('gateEmail').value='';
+  document.getElementById('gateError').classList.remove('visible');
+  document.getElementById('bwInput').value='';document.getElementById('bwPreview').classList.remove('visible');
+  document.querySelectorAll('.age-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ctaBlock').classList.remove('visible');
+  showScreen('screen-intro');
+}
+</script>
+</body>
+</html>
