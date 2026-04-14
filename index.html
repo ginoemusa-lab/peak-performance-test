@@ -295,16 +295,36 @@
   <!-- GATE -->
   <div class="screen" id="screen-gate">
     <div class="eyebrow">Almost There</div>
-    <h2 class="gate-title">Your Score<br>Is Ready.</h2>
-    <p class="gate-sub">Enter your details to unlock your full Peak Performance breakdown — including how you rank against men your age and your key performance blindspots.</p>
+    <h2 class="gate-title">Find Out Where<br>Your Prime Really Is.</h2>
+    <p class="gate-sub">Most men think they're performing. This will tell you if they actually are. Unlock your full breakdown — percentile rank, lift-by-lift analysis and your biggest performance blindspots.</p>
+
     <div class="gate-score-tease">
       <div class="gate-blur-score" id="gateBlurScore">34</div>
       <div style="flex:1">
         <div class="gate-tease-title">Your Peak Performance Score</div>
         <div class="gate-tease-sub">Your percentile rank, lift breakdown, peak comparison and blindspot analysis</div>
       </div>
-      <div style="font-size:20px;flex-shrink:0;margin-left:12px;">🔒</div>
+      <div style="font-size:20px;flex-shrink:0;margin-left:12px;">&#128274;</div>
     </div>
+
+    <div style="margin:20px 0;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--grey);margin-bottom:4px;">Men who already found out</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:140px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--accent);">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--white);letter-spacing:0.05em;">35<span style="font-size:11px;color:var(--accent);margin-left:4px;">LBS</span></div>
+          <div style="font-size:10px;color:var(--grey);margin-top:2px;line-height:1.4;">Kaz, 33 &mdash; Project Manager<br>90 days</div>
+        </div>
+        <div style="flex:1;min-width:140px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--accent);">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--white);letter-spacing:0.05em;">15<span style="font-size:11px;color:var(--accent);margin-left:4px;">LBS MUSCLE</span></div>
+          <div style="font-size:10px;color:var(--grey);margin-top:2px;line-height:1.4;">Pedro, 29 &mdash; Actor<br>Lean build, stayed shredded</div>
+        </div>
+        <div style="flex:1;min-width:140px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--accent);">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--white);letter-spacing:0.05em;">33<span style="font-size:11px;color:var(--accent);margin-left:4px;">LBS</span></div>
+          <div style="font-size:10px;color:var(--grey);margin-top:2px;line-height:1.4;">Rez, 27 &mdash; Accountant<br>Love handles gone</div>
+        </div>
+      </div>
+    </div>
+
     <div class="gate-form">
       <div class="gate-input-row">
         <input class="gate-input" id="gateName" type="text" placeholder="First name" autocomplete="given-name"/>
@@ -316,8 +336,8 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
-    <p class="gate-privacy">No spam — just your results and occasional performance insights. Unsubscribe anytime.</p>
-    <button class="btn-secondary" onclick="currentQ=questions.length-1;renderQuestion();showScreen('screen-question');">← Back to questions</button>
+    <p class="gate-privacy">No spam &mdash; just your results and occasional performance insights. Unsubscribe anytime.</p>
+    <button class="btn-secondary" onclick="currentQ=questions.length-1;renderQuestion();showScreen('screen-question');">&#8592; Back to questions</button>
   </div>
 
   <!-- RESULTS -->
@@ -400,7 +420,7 @@
         <div class="cta-item"><span class="cta-icon">▸</span>See if The High Performance Protocol is the right fit for you</div>
         <div class="cta-item"><span class="cta-icon">▸</span>Free, no pressure, no pitch — just clarity</div>
       </div>
-      <button class="btn-primary gold" onclick="window.open('https://calendly.com/ginoemusa/30min','_blank')" style="width:100%;justify-content:center;padding:22px 36px;font-size:15px;">
+      <button class="btn-primary gold" onclick="window.open('https://calendly.com/ginoemusa/consultation','_blank')" style="width:100%;justify-content:center;padding:22px 36px;font-size:15px;">
         Book Your Free Strategy Call &#8594;
       </button>
     </div>
@@ -433,7 +453,7 @@
 
       <!-- BIG CTA BUTTONS -->
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <a href="https://calendly.com/ginoemusa/30min" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:12px;background:var(--gold);color:var(--black);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;padding:22px 36px;text-decoration:none;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));width:100%;box-sizing:border-box;">
+        <a href="https://calendly.com/ginoemusa/consultation" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:12px;background:var(--gold);color:var(--black);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;padding:22px 36px;text-decoration:none;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));width:100%;box-sizing:border-box;">
           Book a Free Strategy Call &#8594;
         </a>
         <a href="https://ginoemusa.com/results" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:12px;background:transparent;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;padding:22px 36px;text-decoration:none;border:1px solid var(--white);width:100%;box-sizing:border-box;">
@@ -474,8 +494,9 @@ function updatePreview(){
   const kg=getKg(); const preview=document.getElementById('bwPreview');
   if(!kg){preview.classList.remove('visible');return;}
   bodyweightKg=kg; preview.classList.add('visible');
+  const m2 = ageRange==='36-45' ? 0.90 : ageRange==='46+' ? 0.85 : 1.0;
   const visible=[
-    {name:'Squat',rows:[['Average',fmt(kg*1.25)],['Above Avg',fmt(kg*1.75)],['Advanced',fmt(kg*2.0)],['Elite',fmt(kg*2.5)+'+'] ]},
+    {name:'Squat',rows:[['Average',fmt(kg*1.0*m2)],['Above Avg',fmt(kg*1.5*m2)],['Advanced',fmt(kg*1.75*m2)],['Elite',fmt(kg*2.25*m2)+'+'] ]},
     {name:'5K Run',rows:[['Average','30–35 min'],['Above Avg','25–30 min'],['Advanced','Sub 20'],['Elite','Sub 17'] ]},
   ];
   const hidden=['Bench Press','Deadlift','Pull Ups','OHP','Body Fat %'];
@@ -499,18 +520,56 @@ function updatePreview(){
 }
 
 function buildQuestions(kg){
-  const f=r=>fmt(kg*r);
+  // Age-adjusted multiplier for lift standards only
+  // 18-35: full standards, 36-45: 85%, 46+: 75%
+  const ageM = ageRange==='36-45' ? 0.90 : ageRange==='46+' ? 0.85 : 1.0;
+  const m = ageM; // shorthand
+  // f() applies age multiplier to bodyweight ratios for lift targets
+  const f=r=>fmt(kg*r*m);
+  // For pull ups, adjusted weight = bodyweight * ratio * ageM
+  const fpu=r=>fmt(kg*r*m);
+  const ageNote = m < 1 ? ` (age-adjusted ${Math.round(m*100)}% standard)` : '';
   return [
-    {category:'Strength — Squat',pillar:0,lift:'Squat',text:'What is your best squat (1 rep max or estimated)?',sub:'Include bar weight. Use front squat or goblet squat equivalent if needed.',bench:`Your bodyweight: ${fmt(kg)} — all targets calculated for you`,
-      options:[{text:'Less than 1.25x bodyweight',metric:`Below ${f(1.25)}`,tier:'Poor',ti:0,score:0},{text:'1.25x – 1.74x bodyweight',metric:`${f(1.25)} – ${f(1.74)}`,tier:'Average',ti:1,score:2},{text:'1.75x – 1.99x bodyweight',metric:`${f(1.75)} – ${f(1.99)}`,tier:'Above Average',ti:2,score:3},{text:'2x – 2.49x bodyweight',metric:`${f(2.0)} – ${f(2.49)}`,tier:'Advanced',ti:3,score:4},{text:'2.5x bodyweight or more',metric:`${f(2.5)}+`,tier:'Elite',ti:4,score:5}]},
-    {category:'Strength — Bench Press',pillar:0,lift:'Bench Press',text:'What is your best bench press (1 rep max or estimated)?',sub:'Flat barbell bench. Estimate barbell equivalent if using dumbbells.',bench:`Your bodyweight: ${fmt(kg)}`,
-      options:[{text:'Less than bodyweight',metric:`Below ${fmt(kg)}`,tier:'Poor',ti:0,score:0},{text:'Around bodyweight',metric:`Around ${fmt(kg)}`,tier:'Average',ti:1,score:2},{text:'1.25x – 1.49x bodyweight',metric:`${f(1.25)} – ${f(1.49)}`,tier:'Above Average',ti:2,score:3},{text:'1.5x – 1.99x bodyweight',metric:`${f(1.5)} – ${f(1.99)}`,tier:'Advanced',ti:3,score:4},{text:'2x bodyweight or more',metric:`${f(2.0)}+`,tier:'Elite',ti:4,score:5}]},
-    {category:'Strength — Deadlift',pillar:0,lift:'Deadlift',text:'What is your best deadlift (1 rep max or estimated)?',sub:'Conventional or sumo. Include bar weight.',bench:`Your bodyweight: ${fmt(kg)}`,
-      options:[{text:'Less than bodyweight',metric:`Below ${fmt(kg)}`,tier:'Poor',ti:0,score:0},{text:'1x – 1.49x bodyweight',metric:`${fmt(kg)} – ${f(1.49)}`,tier:'Average',ti:1,score:2},{text:'1.5x – 1.99x bodyweight',metric:`${f(1.5)} – ${f(1.99)}`,tier:'Above Average',ti:2,score:3},{text:'2x – 2.49x bodyweight',metric:`${f(2.0)} – ${f(2.49)}`,tier:'Advanced',ti:3,score:4},{text:'3x bodyweight or more',metric:`${f(3.0)}+`,tier:'Elite',ti:4,score:5}]},
-    {category:'Strength — Pull Ups',pillar:0,lift:'Pull Ups',text:'What is your best pull up performance?',sub:'Strict full range — dead hang to chin over bar. No kipping.',bench:`Your bodyweight: ${fmt(kg)}`,
-      options:[{text:'Cannot complete bodyweight pull ups',metric:'Less than 1 rep',tier:'Poor',ti:0,score:0},{text:'10 reps at bodyweight',metric:`10 reps × ${fmt(kg)}`,tier:'Average',ti:1,score:2},{text:'5 reps with 20% added weight',metric:`5 reps × ${f(1.2)}`,tier:'Above Average',ti:2,score:3},{text:'5 reps with 50% added weight',metric:`5 reps × ${f(1.5)}`,tier:'Advanced',ti:3,score:4},{text:'5 reps with bodyweight added',metric:`5 reps × ${f(2.0)}`,tier:'Elite',ti:4,score:5}]},
-    {category:'Strength — Overhead Press',pillar:0,lift:'OHP',text:'What is your best overhead press (1 rep max or estimated)?',sub:'Standing strict press — no leg drive. Include bar weight.',bench:`Your bodyweight: ${fmt(kg)}`,
-      options:[{text:'Less than 0.5x bodyweight',metric:`Below ${f(0.5)}`,tier:'Poor',ti:0,score:0},{text:'0.5x – 0.74x bodyweight',metric:`${f(0.5)} – ${f(0.74)}`,tier:'Average',ti:1,score:2},{text:'0.75x – 0.99x bodyweight',metric:`${f(0.75)} – ${f(0.99)}`,tier:'Above Average',ti:2,score:3},{text:'1x – 1.19x bodyweight',metric:`${f(1.0)} – ${f(1.19)}`,tier:'Advanced',ti:3,score:4},{text:'1.2x bodyweight or more',metric:`${f(1.2)}+`,tier:'Elite',ti:4,score:5}]},
+    {category:'Strength — Squat',pillar:0,lift:'Squat',text:'What is your best squat (1 rep max or estimated)?',sub:'Include bar weight. Use front squat or goblet squat equivalent if needed.',bench:`Your bodyweight: ${fmt(kg)} — targets adjusted for age ${ageRange}${ageNote}`,
+      options:[
+        {text:'Less than 1x bodyweight',metric:`Below ${fmt(kg*m)}`,tier:'Poor',ti:0,score:0},
+        {text:'1x – 1.49x bodyweight',metric:`${fmt(kg*m)} – ${fmt(kg*1.49*m)}`,tier:'Average',ti:1,score:2},
+        {text:'1.5x – 1.74x bodyweight',metric:`${fmt(kg*1.5*m)} – ${fmt(kg*1.74*m)}`,tier:'Above Average',ti:2,score:3},
+        {text:'1.75x – 2.24x bodyweight',metric:`${fmt(kg*1.75*m)} – ${fmt(kg*2.24*m)}`,tier:'Advanced',ti:3,score:4},
+        {text:'2.25x bodyweight or more',metric:`${fmt(kg*2.25*m)}+`,tier:'Elite',ti:4,score:5}
+      ]},
+    {category:'Strength — Bench Press',pillar:0,lift:'Bench Press',text:'What is your best bench press (1 rep max or estimated)?',sub:'Flat barbell bench. Estimate barbell equivalent if using dumbbells.',bench:`Your bodyweight: ${fmt(kg)}${ageNote}`,
+      options:[
+        {text:'Less than 0.75x bodyweight',metric:`Below ${fmt(kg*0.75*m)}`,tier:'Poor',ti:0,score:0},
+        {text:'0.75x – 1.09x bodyweight',metric:`${fmt(kg*0.75*m)} – ${fmt(kg*1.09*m)}`,tier:'Average',ti:1,score:2},
+        {text:'1.1x – 1.34x bodyweight',metric:`${fmt(kg*1.1*m)} – ${fmt(kg*1.34*m)}`,tier:'Above Average',ti:2,score:3},
+        {text:'1.35x – 1.74x bodyweight',metric:`${fmt(kg*1.35*m)} – ${fmt(kg*1.74*m)}`,tier:'Advanced',ti:3,score:4},
+        {text:'1.75x bodyweight or more',metric:`${fmt(kg*1.75*m)}+`,tier:'Elite',ti:4,score:5}
+      ]},
+    {category:'Strength — Deadlift',pillar:0,lift:'Deadlift',text:'What is your best deadlift (1 rep max or estimated)?',sub:'Conventional or sumo. Include bar weight.',bench:`Your bodyweight: ${fmt(kg)}${ageNote}`,
+      options:[
+        {text:'Less than bodyweight',metric:`Below ${fmt(kg*m)}`,tier:'Poor',ti:0,score:0},
+        {text:'1x – 1.49x bodyweight',metric:`${fmt(kg*m)} – ${fmt(kg*1.49*m)}`,tier:'Average',ti:1,score:2},
+        {text:'1.5x – 1.99x bodyweight',metric:`${fmt(kg*1.5*m)} – ${fmt(kg*1.99*m)}`,tier:'Above Average',ti:2,score:3},
+        {text:'2x – 2.49x bodyweight',metric:`${fmt(kg*2.0*m)} – ${fmt(kg*2.49*m)}`,tier:'Advanced',ti:3,score:4},
+        {text:'2.5x bodyweight or more',metric:`${fmt(kg*2.5*m)}+`,tier:'Elite',ti:4,score:5}
+      ]},
+    {category:'Strength — Pull Ups',pillar:0,lift:'Pull Ups',text:'What is your best pull up performance?',sub:'Strict full range — dead hang to chin over bar. No kipping.',bench:`Your bodyweight: ${fmt(kg)}${ageNote}`,
+      options:[
+        {text:'Cannot complete bodyweight pull ups',metric:'Less than 1 rep',tier:'Poor',ti:0,score:0},
+        {text:'5 reps at bodyweight',metric:`5 reps × ${fmt(kg)}`,tier:'Average',ti:1,score:2},
+        {text:'10 reps at bodyweight',metric:`10 reps × ${fmt(kg)}`,tier:'Above Average',ti:2,score:3},
+        {text:'5 reps with 25% added weight',metric:`5 reps × ${fmt(kg*1.25*m)}`,tier:'Advanced',ti:3,score:4},
+        {text:'5 reps with 50% added weight',metric:`5 reps × ${fmt(kg*1.5*m)}`,tier:'Elite',ti:4,score:5}
+      ]},
+    {category:'Strength — Overhead Press',pillar:0,lift:'OHP',text:'What is your best overhead press (1 rep max or estimated)?',sub:'Standing strict press — no leg drive. Include bar weight.',bench:`Your bodyweight: ${fmt(kg)}${ageNote}`,
+      options:[
+        {text:'Less than 0.4x bodyweight',metric:`Below ${fmt(kg*0.4*m)}`,tier:'Poor',ti:0,score:0},
+        {text:'0.4x – 0.64x bodyweight',metric:`${fmt(kg*0.4*m)} – ${fmt(kg*0.64*m)}`,tier:'Average',ti:1,score:2},
+        {text:'0.65x – 0.84x bodyweight',metric:`${fmt(kg*0.65*m)} – ${fmt(kg*0.84*m)}`,tier:'Above Average',ti:2,score:3},
+        {text:'0.85x – 1.04x bodyweight',metric:`${fmt(kg*0.85*m)} – ${fmt(kg*1.04*m)}`,tier:'Advanced',ti:3,score:4},
+        {text:'1.05x bodyweight or more',metric:`${fmt(kg*1.05*m)}+`,tier:'Elite',ti:4,score:5}
+      ]},
     {category:'Conditioning — 5K Run',pillar:1,lift:'5K Run',text:'What is your best 5K run time?',sub:"Flat course, recent performance. Estimate based on your pace if you haven't run one recently.",bench:null,
       options:[{text:'Over 35 minutes',metric:'35:00+',tier:'Poor',ti:0,score:0},{text:'30 – 35 minutes',metric:'30:00 – 35:00',tier:'Average',ti:1,score:2},{text:'25 – 30 minutes',metric:'25:00 – 30:00',tier:'Above Average',ti:2,score:3},{text:'20 – 25 minutes',metric:'20:00 – 25:00',tier:'Advanced',ti:3,score:4},{text:'Under 20 minutes',metric:'Sub 20:00',tier:'Elite',ti:4,score:5}]},
     {category:'Body Composition',pillar:2,lift:'Body Composition',text:'Which best describes your current body composition?',sub:'Be honest — this is the single most visible indicator of how your physiology is functioning.',bench:null,
@@ -661,7 +720,7 @@ function calcResults(){
   return{total,maxScore,pillars,pillarMax,tier};
 }
 
-async function submitGate(){
+function submitGate(){
   const name=document.getElementById('gateName').value.trim();
   const email=document.getElementById('gateEmail').value.trim();
   const errorEl=document.getElementById('gateError');
@@ -671,27 +730,35 @@ async function submitGate(){
   const btn=document.getElementById('gateBtn');
   btn.style.opacity='0.6';btn.style.pointerEvents='none';
   btn.innerHTML='Unlocking... <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-  const{total,maxScore,pillars,pillarMax,tier}=calcResults();
-  const pcts=pillars.map((p,i)=>Math.round((p/pillarMax[i])*100)+'%');
-  const percentile=getPercentile(total,ageRange);
-  const isTop=percentile>=50;
-  const displayPct=isTop?(100-percentile):percentile;
-  const rankLabel=isTop?`Top ${displayPct}%`:`Bottom ${displayPct}%`;
-  const L=['A','B','C','D','E','F'];
-  const answerLines=questions.map((q,i)=>{const sel=answers[i]!==null?L[answers[i]]+') '+q.options[answers[i]].text+(q.options[answers[i]].metric?' ('+q.options[answers[i]].metric+')':''):'Not answered';return(i+1)+'. '+q.text+'\n   \u2192 '+sel;}).join('\n\n');
-  try{
-    const iframe=document.createElement('iframe');iframe.name='kit-iframe';iframe.style.display='none';document.body.appendChild(iframe);
-    const form=document.createElement('form');form.method='POST';form.action='https://app.kit.com/forms/9309210/subscriptions';form.target='kit-iframe';form.style.display='none';
-    [['email_address',email],['first_name',name.split(' ')[0]]].forEach(([k,v])=>{const inp=document.createElement('input');inp.type='hidden';inp.name=k;inp.value=v;form.appendChild(inp);});
-    document.body.appendChild(form);form.submit();
-    setTimeout(()=>{document.body.removeChild(form);document.body.removeChild(iframe);},3000);
-  }catch(e){console.warn('Kit:',e);}
-  emailjs.send('service_xibtquv','template_zjyum8j',{
-    name,email,score:total+' / '+maxScore,tier:tier.name,
-    energy:pcts[0],hormonal:pcts[1],body:pcts[2],mental:pcts[3],
-    answers:`Bodyweight: ${fmt(bodyweightKg)} | Age: ${ageRange} | Percentile: ${rankLabel}\n\n${answerLines}`
-  }).catch(e=>console.warn('EmailJS:',e));
+
+  // Show results IMMEDIATELY — don't wait for any network calls
   showResults(name);
+
+  // Fire Kit + EmailJS fully in background — results page already showing
+  setTimeout(function(){
+    try{
+      const{total,maxScore,pillars,pillarMax,tier}=calcResults();
+      const pcts=pillars.map((p,i)=>Math.round((p/pillarMax[i])*100)+'%');
+      const percentile=getPercentile(total,ageRange);
+      const isTop=percentile>=50;
+      const displayPct=isTop?(100-percentile):percentile;
+      const rankLabel=isTop?'Top '+displayPct+'%':'Bottom '+displayPct+'%';
+      const L=['A','B','C','D','E','F'];
+      const answerLines=questions.map((q,i)=>{const sel=answers[i]!==null?L[answers[i]]+') '+q.options[answers[i]].text+(q.options[answers[i]].metric?' ('+q.options[answers[i]].metric+')':''):'Not answered';return(i+1)+'. '+q.text+'\n   -> '+sel;}).join('\n\n');
+      // Kit
+      const iframe=document.createElement('iframe');iframe.name='kit-bg';iframe.style.display='none';document.body.appendChild(iframe);
+      const form=document.createElement('form');form.method='POST';form.action='https://app.kit.com/forms/9309210/subscriptions';form.target='kit-bg';form.style.display='none';
+      [['email_address',email],['first_name',name.split(' ')[0]]].forEach(([k,v])=>{const inp=document.createElement('input');inp.type='hidden';inp.name=k;inp.value=v;form.appendChild(inp);});
+      document.body.appendChild(form);form.submit();
+      setTimeout(()=>{try{document.body.removeChild(form);document.body.removeChild(iframe);}catch(e){}},4000);
+      // EmailJS
+      emailjs.send('service_xibtquv','template_zjyum8j',{
+        name,email,score:total+' / '+maxScore,tier:tier.name,
+        energy:pcts[0],hormonal:pcts[1],body:pcts[2],mental:pcts[3],
+        answers:'Bodyweight: '+fmt(bodyweightKg)+' | Age: '+ageRange+' | Percentile: '+rankLabel+'\n\n'+answerLines
+      }).catch(e=>console.warn('EmailJS:',e));
+    }catch(e){console.warn('Background submission error:',e);}
+  },100);
 }
 
 function showResults(name){
