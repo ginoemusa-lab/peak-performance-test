@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G|M · Nutrition Guide & Calorie Calculator · 10lb in 21 Days</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #060606; --card: #0f0f0f; --card2: #141414;
+    --border: #1c1c1c; --border2: #262626;
+    --gold: #C8A45A; --gold-dim: rgba(200,164,90,0.07);
+    --white: #EDE8DF; --muted: #555;
+    --green: #5A9E7A; --green-dim: rgba(90,158,122,0.08);
+    --red: #C97A5A;
+  }
+  * { margin:0; padding:0; box-sizing:border-box }
+  body { background:var(--black); color:var(--white); font-family:'Outfit',sans-serif; font-weight:300; padding:48px; max-width:900px; margin:0 auto }
+
+  /* ── HEADER ── */
+  .page-header { border-bottom:1px solid var(--border); padding-bottom:32px; margin-bottom:40px; display:flex; justify-content:space-between; align-items:flex-end }
+  .logo { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:700; letter-spacing:8px; color:var(--gold); text-transform:uppercase; margin-bottom:10px }
+  .page-header h1 { font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:700; line-height:1; color:var(--white) }
+  .page-header h1 em { color:var(--gold); font-style:italic }
+  .header-right { text-align:right }
+  .starts { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:6px }
+  .date { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--gold) }
+
+  /* ── NAV TABS ── */
+  .tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:40px; overflow-x:auto }
+  .tab { padding:14px 24px; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap; flex-shrink:0 }
+  .tab:hover { color:var(--white) }
+  .tab.active { color:var(--gold); border-bottom-color:var(--gold) }
+
+  /* ── SECTIONS ── */
+  .section { display:none; animation:up 0.3s ease }
+  .section.active { display:block }
+  @keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .sec-label { font-size:9px; letter-spacing:5px; text-transform:uppercase; color:var(--gold); margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border) }
+
+  .intro { background:var(--gold-dim); border:1px solid rgba(200,164,90,0.15); padding:20px 24px; margin-bottom:32px }
+  .intro p { font-size:12px; color:var(--muted); line-height:1.8 }
+  .intro strong { color:var(--white); font-weight:400 }
+
+  /* ── RULES ── */
+  .rules-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:40px }
+  .rule-card { background:var(--card); border:1px solid var(--border); padding:24px 20px; position:relative; overflow:hidden }
+  .rule-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--gold) }
+  .rule-num { font-family:'Cormorant Garamond',serif; font-size:52px; font-weight:700; opacity:0.06; line-height:1; margin-bottom:8px }
+  .rule-title { font-size:14px; color:var(--white); margin-bottom:8px; font-weight:400 }
+  .rule-body { font-size:11px; color:var(--muted); line-height:1.7 }
+  .rule-body strong { color:var(--white); font-weight:400 }
+
+  /* ── PROTEIN BLOCK ── */
+  .protein-block { background:var(--card); border:1px solid var(--border); padding:28px; margin-bottom:40px }
+  .protein-formula { display:flex; align-items:center; gap:16px; margin:16px 0; flex-wrap:wrap }
+  .formula-part { background:var(--black); border:1px solid var(--border2); padding:12px 20px; text-align:center }
+  .formula-num { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; color:var(--gold); line-height:1 }
+  .formula-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-top:4px }
+  .formula-op { font-family:'Cormorant Garamond',serif; font-size:32px; color:var(--muted); font-weight:300 }
+  .protein-examples { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px }
+  .protein-ex { background:var(--black); border:1px solid var(--border); padding:14px; text-align:center }
+  .protein-ex-weight { font-size:11px; color:var(--muted); margin-bottom:4px; letter-spacing:1px }
+  .protein-ex-target { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:700; color:var(--gold); line-height:1 }
+  .protein-ex-unit { font-size:10px; color:var(--muted); margin-top:2px }
+
+  /* ── HABITS ── */
+  .habit-item { display:flex; align-items:flex-start; gap:16px; padding:20px 0; border-bottom:1px solid var(--border) }
+  .habit-item:last-child { border-bottom:none }
+  .habit-icon { font-size:24px; flex-shrink:0; margin-top:2px }
+  .habit-title { font-size:14px; color:var(--white); margin-bottom:4px }
+  .habit-body { font-size:12px; color:var(--muted); line-height:1.7 }
+  .habit-body strong { color:var(--white); font-weight:400 }
+
+  /* ── MEALS ── */
+  .meals-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:40px }
+  .meal-card { background:var(--card); border:1px solid var(--border); padding:20px }
+  .meal-num { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:8px }
+  .meal-name { font-size:15px; color:var(--white); margin-bottom:6px; font-family:'Cormorant Garamond',serif; font-weight:600 }
+  .meal-desc { font-size:11px; color:var(--muted); line-height:1.6; margin-bottom:10px }
+  .meal-macros { display:flex; gap:8px; flex-wrap:wrap }
+  .macro { font-size:10px; color:var(--muted); background:var(--black); border:1px solid var(--border2); padding:4px 10px }
+  .macro span { color:var(--green) }
+
+  /* ── AVOID ── */
+  .avoid-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:40px }
+  .avoid-card { background:var(--card); border:1px solid var(--border); padding:20px }
+  .avoid-title { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:12px }
+  .avoid-list { list-style:none }
+  .avoid-list li { display:flex; gap:8px; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:12px; color:var(--muted) }
+  .avoid-list li:last-child { border-bottom:none }
+  .adot { width:5px; height:5px; border-radius:50%; flex-shrink:0 }
+
+  /* ── CALCULATOR ── */
+  .calc-intro { background:var(--gold-dim); border:1px solid rgba(200,164,90,0.15); padding:20px 24px; margin-bottom:32px }
+  .calc-intro p { font-size:12px; color:var(--muted); line-height:1.8 }
+  .calc-intro strong { color:var(--white); font-weight:400 }
+
+  .form-section { background:var(--card); border:1px solid var(--border); padding:32px; margin-bottom:2px }
+  .field { margin-bottom:20px }
+  .field:last-child { margin-bottom:0 }
+  .field label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:8px }
+  .field input, .field select {
+    width:100%; background:var(--black); border:1px solid var(--border2); color:var(--white);
+    padding:14px 16px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:300;
+    outline:none; transition:border-color 0.2s; -webkit-appearance:none; appearance:none
+  }
+  .field input:focus, .field select:focus { border-color:var(--gold) }
+  .field input::placeholder { color:var(--muted) }
+  .field select {
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 16px center; cursor:pointer
+  }
+  .field select option { background:var(--black); color:var(--white) }
+
+  .calc-btn { width:100%; background:var(--gold); color:var(--black); border:none; padding:18px; font-family:'Outfit',sans-serif; font-size:11px; font-weight:500; letter-spacing:4px; text-transform:uppercase; cursor:pointer; transition:background 0.2s; margin-top:12px }
+  .calc-btn:hover { background:var(--white) }
+
+  .results { display:none }
+  .result-hero { background:var(--gold-dim); border:1px solid rgba(200,164,90,0.2); padding:32px; text-align:center; margin-bottom:8px }
+  .result-hero-label { font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:12px }
+  .result-hero-num { font-family:'Cormorant Garamond',serif; font-size:80px; font-weight:700; color:var(--gold); line-height:1 }
+  .result-hero-unit { font-size:16px; color:var(--muted); margin-top:4px; letter-spacing:2px }
+  .result-hero-sub { font-size:12px; color:var(--muted); margin-top:12px; line-height:1.6; max-width:400px; margin-left:auto; margin-right:auto }
+
+  .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px }
+  .result-card { background:var(--card); border:1px solid var(--border); padding:24px 20px; text-align:center }
+  .result-card-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:10px }
+  .result-card-num { font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:700; line-height:1; margin-bottom:4px }
+  .result-card-unit { font-size:10px; color:var(--muted); letter-spacing:1px }
+
+  .summary-block { background:var(--card2); border:1px solid var(--border); padding:24px 28px; margin-bottom:8px }
+  .summary-title { font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--muted); margin-bottom:16px }
+  .summary-text { font-size:12px; color:var(--muted); line-height:1.9 }
+  .summary-text strong { color:var(--white); font-weight:400 }
+
+  .reset-btn { width:100%; background:none; border:1px solid var(--border2); color:var(--muted); padding:14px; font-family:'Outfit',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; margin-top:8px }
+  .reset-btn:hover { border-color:var(--muted); color:var(--white) }
+
+  .error { color:var(--red); font-size:11px; margin-top:8px; display:none }
+
+  /* ── FOOTER ── */
+  footer { border-top:1px solid var(--border); padding-top:24px; margin-top:40px; display:flex; justify-content:space-between; align-items:center }
+  .footer-logo { font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:5px; color:var(--gold); text-transform:uppercase }
+  .footer-note { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted) }
+
+  @media(max-width:700px){
+    body { padding:20px }
+    .page-header { flex-direction:column; gap:16px }
+    .rules-grid, .meals-grid, .avoid-grid, .result-grid, .protein-examples { grid-template-columns:1fr }
+    .meals-grid .meal-card:last-child { grid-column:span 1 }
+    .tabs { gap:0 }
+    .tab { padding:12px 14px; font-size:9px }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <div class="logo">G|M · Ginoe Musa</div>
+    <h1>Nutrition Guide<br><em>& Calorie Calculator</em></h1>
+  </div>
+  <div class="header-right">
+    <div class="starts">Challenge Start</div>
+    <div class="date">Monday 18th May</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('guide',this)">Nutrition Guide</div>
+  <div class="tab" onclick="showTab('calc',this)">Calorie Calculator</div>
+</div>
+
+<!-- ══════════ NUTRITION GUIDE ══════════ -->
+<div class="section active" id="tab-guide">
+
+  <div class="intro">
+    <p>You do not need to count every calorie. You do not need a meal plan. You need <strong>three rules and one number.</strong> Follow these for 21 days and your nutrition will take care of itself.</p>
+  </div>
+
+  <!-- THREE RULES -->
+  <div class="sec-label">The Three Rules</div>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-num">1</div>
+      <div class="rule-title">Anchor with protein</div>
+      <div class="rule-body">Build every meal around a protein source first. <strong>Chicken, beef, fish, eggs, Greek yoghurt, cottage cheese.</strong> Everything else fills in around it. Hit your protein target and the rest largely takes care of itself.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">2</div>
+      <div class="rule-title">Colour the plate</div>
+      <div class="rule-body">Add vegetables to at least two meals per day. <strong>Spinach, broccoli, peppers, cucumber, tomatoes.</strong> No specific amounts — just add colour. Fibre, vitamins, and volume for almost zero calories.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">3</div>
+      <div class="rule-title">Limit ultra-processed food</div>
+      <div class="rule-body">If it comes in a wrapper with more than five ingredients — limit it. <strong>Not eliminate. Limit.</strong> One rule: if you eat something processed, pair it with a protein source. It automatically reduces the damage.</div>
+    </div>
+  </div>
+
+  <!-- PROTEIN TARGET -->
+  <div class="sec-label">Your Protein Target</div>
+  <div class="protein-block">
+    <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px">Protein protects your muscle while you are in a calorie deficit. Without enough protein your body breaks down muscle for energy — you lose weight but not fat. Use the <strong style="color:var(--white)">Calorie Calculator tab</strong> to get your exact personalised target.</div>
+    <div class="protein-formula">
+      <div class="formula-part"><div class="formula-num">2.2</div><div class="formula-label">grams</div></div>
+      <div class="formula-op">×</div>
+      <div class="formula-part"><div class="formula-num">your weight</div><div class="formula-label">in kg</div></div>
+      <div class="formula-op">=</div>
+      <div class="formula-part" style="border-color:rgba(200,164,90,0.3)"><div class="formula-num" style="color:var(--gold)">daily protein</div><div class="formula-label">grams per day</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin:12px 0 8px">Examples based on common weights:</div>
+    <div class="protein-examples">
+      <div class="protein-ex"><div class="protein-ex-weight">75kg</div><div class="protein-ex-target">165g</div><div class="protein-ex-unit">protein per day</div></div>
+      <div class="protein-ex"><div class="protein-ex-weight">85kg</div><div class="protein-ex-target">187g</div><div class="protein-ex-unit">protein per day</div></div>
+      <div class="protein-ex"><div class="protein-ex-weight">95kg</div><div class="protein-ex-target">209g</div><div class="protein-ex-unit">protein per day</div></div>
+    </div>
+    <div style="margin-top:16px;padding:16px;background:var(--black);border:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.7">Track protein daily in <strong style="color:var(--white)">MyFitnessPal</strong> or <strong style="color:var(--white)">Cronometer.</strong> Screenshot your daily total for the evening WhatsApp check-in.</div>
+  </div>
+
+  <!-- DAILY HABITS -->
+  <div class="sec-label">The 3 Daily Habits</div>
+  <div style="margin-bottom:40px">
+    <div class="habit-item">
+      <div class="habit-icon">👟</div>
+      <div>
+        <div class="habit-title">8,000 → 10,000 → 12,000 steps daily (increases each week)</div>
+        <div class="habit-body">Walking burns significant calories without spiking hunger hormones the way intense cardio does. <strong>Step goal increases each week to prevent a plateau</strong> — 8k in week 1, 10k in week 2, 12k in week 3. Screenshot your count in the evening check-in.</div>
+      </div>
+    </div>
+    <div class="habit-item">
+      <div class="habit-icon">🥩</div>
+      <div>
+        <div class="habit-title">Hit your protein target every day</div>
+        <div class="habit-body">Your most important number. Not calories, not carbs — <strong>protein.</strong> Log it in MyFitnessPal or Cronometer. Screenshot your daily total in the group check-in. If you hit nothing else — hit this.</div>
+      </div>
+    </div>
+    <div class="habit-item">
+      <div class="habit-icon">💧</div>
+      <div>
+        <div class="habit-title">3 litres of water every day — done by 8pm</div>
+        <div class="habit-body">Dehydration disguises itself as hunger. <strong>Most men eating excess calories are simply under-hydrated.</strong> Use a marked 1L bottle — fill it three times. Done by 8pm so sleep is not disrupted.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 MEALS -->
+  <div class="sec-label">5 High Protein Meals That Fit Your Life</div>
+  <div class="meals-grid">
+    <div class="meal-card">
+      <div class="meal-num">Meal 01</div>
+      <div class="meal-name">Greek Yoghurt Breakfast Bowl</div>
+      <div class="meal-desc">500g Greek yoghurt, mixed berries, handful of granola, drizzle of honey. Quick to prepare, high protein, keeps hunger low until lunch.</div>
+      <div class="meal-macros"><div class="macro">Protein <span>35g</span></div><div class="macro">Cals <span>~420</span></div></div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-num">Meal 02</div>
+      <div class="meal-name">Chicken Rice and Broccoli</div>
+      <div class="meal-desc">200g grilled chicken breast, 150g cooked rice, steamed broccoli, hot sauce or soy sauce. The most reliable high protein meal in existence.</div>
+      <div class="meal-macros"><div class="macro">Protein <span>52g</span></div><div class="macro">Cals <span>~520</span></div></div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-num">Meal 03</div>
+      <div class="meal-name">Scrambled Eggs on Toast</div>
+      <div class="meal-desc">4 whole eggs scrambled, 2 slices sourdough or wholegrain toast, spinach on the side. Fast, cheap, high protein. Add smoked salmon to push protein higher.</div>
+      <div class="meal-macros"><div class="macro">Protein <span>34g</span></div><div class="macro">Cals <span>~480</span></div></div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-num">Meal 04</div>
+      <div class="meal-name">Lean Beef Mince Bowl</div>
+      <div class="meal-desc">200g lean beef mince, rice or sweet potato, peppers and onion, seasoned with cumin and paprika. Batch cook Sunday — eat across the week.</div>
+      <div class="meal-macros"><div class="macro">Protein <span>48g</span></div><div class="macro">Cals <span>~550</span></div></div>
+    </div>
+    <div class="meal-card" style="grid-column:span 2">
+      <div class="meal-num">Meal 05</div>
+      <div class="meal-name">Protein Shake and Banana</div>
+      <div class="meal-desc">2 scoops whey protein in water or skimmed milk, one banana. Not a meal replacement — a protein gap filler. Use when short on time or struggling to hit your protein target by evening.</div>
+      <div class="meal-macros"><div class="macro">Protein <span>45–55g</span></div><div class="macro">Cals <span>~380</span></div></div>
+    </div>
+  </div>
+
+  <!-- WHAT TO LIMIT -->
+  <div class="sec-label">What to Limit</div>
+  <div class="avoid-grid">
+    <div class="avoid-card">
+      <div class="avoid-title">Limit these</div>
+      <ul class="avoid-list">
+        <li><div class="adot" style="background:var(--red)"></div>Alcohol — empty calories, disrupts sleep and fat loss</li>
+        <li><div class="adot" style="background:var(--red)"></div>Sugary drinks — juice, fizzy drinks, energy drinks</li>
+        <li><div class="adot" style="background:var(--red)"></div>Fast food more than once per week</li>
+        <li><div class="adot" style="background:var(--red)"></div>Ultra-processed snacks — crisps, chocolate, biscuits</li>
+        <li><div class="adot" style="background:var(--red)"></div>Excessive sauces — ketchup, mayo, creamy dressings</li>
+      </ul>
+    </div>
+    <div class="avoid-card">
+      <div class="avoid-title">Not banned — just be aware</div>
+      <ul class="avoid-list">
+        <li><div class="adot" style="background:var(--green)"></div>White rice and white bread are fine — portion matters</li>
+        <li><div class="adot" style="background:var(--green)"></div>Fruit is fine — do not avoid it for sugar content</li>
+        <li><div class="adot" style="background:var(--green)"></div>Coffee is fine — avoid adding sugar</li>
+        <li><div class="adot" style="background:var(--green)"></div>One social meal per week will not break your progress</li>
+        <li><div class="adot" style="background:var(--green)"></div>Imperfect days happen — they do not restart the clock</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ CALORIE CALCULATOR ══════════ -->
+<div class="section" id="tab-calc">
+
+  <div class="calc-intro">
+    <p>Fill in your details below to get your <strong>exact daily calorie target, protein goal, and projected 21-day result.</strong> Takes 30 seconds. Do this before day 1.</p>
+  </div>
+
+  <!-- FORM -->
+  <div id="calc-form">
+    <div class="form-section">
+      <div class="sec-label" style="margin-bottom:24px">Your Details</div>
+      <div class="field">
+        <label>Age</label>
+        <input type="number" id="age" placeholder="e.g. 28" min="16" max="80">
+      </div>
+      <div class="field">
+        <label>Weight (kg)</label>
+        <input type="number" id="weight" placeholder="e.g. 85" min="40" max="200">
+      </div>
+      <div class="field">
+        <label>Height (cm)</label>
+        <input type="number" id="height" placeholder="e.g. 178" min="140" max="220">
+      </div>
+      <div class="field">
+        <label>Activity Level</label>
+        <select id="activity">
+          <option value="">Select your activity level</option>
+          <option value="1.2">Sedentary — desk job, little exercise</option>
+          <option value="1.375">Lightly active — light exercise 1–3 days/week</option>
+          <option value="1.55">Moderately active — training 3–5 days/week</option>
+          <option value="1.725">Very active — hard training 6–7 days/week</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Deficit Goal</label>
+        <select id="goal">
+          <option value="">Select your goal</option>
+          <option value="500">Moderate deficit — recommended for most men</option>
+          <option value="750">Larger deficit — only if consistently hitting protein</option>
+        </select>
+      </div>
+      <p class="error" id="error">Please fill in all fields to get your targets.</p>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate My Targets</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <div class="result-hero">
+      <div class="result-hero-label">Daily Calorie Target</div>
+      <div class="result-hero-num" id="deficit-cals">—</div>
+      <div class="result-hero-unit">CALORIES PER DAY</div>
+      <div class="result-hero-sub" id="deficit-note">—</div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-card-label">Maintenance Calories</div>
+        <div class="result-card-num" style="color:var(--muted)" id="maint-cals">—</div>
+        <div class="result-card-unit">kcal / day</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-label">Daily Deficit</div>
+        <div class="result-card-num" style="color:var(--red)" id="deficit-size">—</div>
+        <div class="result-card-unit">kcal below maintenance</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-label">Daily Protein Target</div>
+        <div class="result-card-num" style="color:var(--gold)" id="protein">—</div>
+        <div class="result-card-unit">grams per day</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-label">Projected Loss — 21 Days</div>
+        <div class="result-card-num" style="color:var(--green)" id="projected">—</div>
+        <div class="result-card-unit">kg if fully consistent</div>
+      </div>
+    </div>
+
+    <!-- HABIT TARGETS -->
+    <div style="background:var(--card);border:1px solid var(--border);padding:28px;margin-bottom:8px">
+      <div class="sec-label" style="margin-bottom:20px">Your 3 Daily Non-Negotiables</div>
+      <div class="habit-item">
+        <div class="habit-icon">👟</div>
+        <div>
+          <div class="habit-title">Steps — Week 1: 8,000 · Week 2: 10,000 · Week 3: 12,000</div>
+          <div class="habit-body">Step goal increases each week. Screenshot your daily total in the evening check-in.</div>
+        </div>
+      </div>
+      <div class="habit-item">
+        <div class="habit-icon">🥩</div>
+        <div>
+          <div class="habit-title">Protein — <span id="protein-habit" style="color:var(--gold)">—</span>g per day</div>
+          <div class="habit-body">Track in MyFitnessPal or Cronometer. Screenshot your daily protein total for the check-in. This is your most important number.</div>
+        </div>
+      </div>
+      <div class="habit-item" style="border-bottom:none">
+        <div class="habit-icon">💧</div>
+        <div>
+          <div class="habit-title">Water — 3 litres every day, done by 8pm</div>
+          <div class="habit-body">Use a marked 1L bottle. Fill it three times. Dehydration disguises itself as hunger.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-block">
+      <div class="summary-title">Your 21-Day Summary</div>
+      <div class="summary-text" id="summary-text">—</div>
+    </div>
+
+    <button class="reset-btn" onclick="resetCalc()">Recalculate</button>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">G|M · The 10lb in 21 Days Challenge</div>
+  <div class="footer-note">Cohort 1 · Starts Monday 18th May</div>
+</footer>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+function calculate() {
+  const age      = parseInt(document.getElementById('age').value);
+  const weight   = parseFloat(document.getElementById('weight').value);
+  const height   = parseFloat(document.getElementById('height').value);
+  const activity = parseFloat(document.getElementById('activity').value);
+  const goal     = parseInt(document.getElementById('goal').value);
+  const err      = document.getElementById('error');
+
+  if (!age || !weight || !height || !activity || !goal ||
+      isNaN(age) || isNaN(weight) || isNaN(height)) {
+    err.style.display = 'block'; return;
+  }
+  err.style.display = 'none';
+
+  // Mifflin-St Jeor (male)
+  const bmr  = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+  const tdee  = Math.round(bmr * activity);
+  const deficit = tdee - goal;
+  const protein = Math.round(weight * 2.2);
+  const projected = ((goal * 21) / 7700).toFixed(1);
+
+  document.getElementById('maint-cals').textContent   = tdee.toLocaleString();
+  document.getElementById('deficit-cals').textContent  = deficit.toLocaleString();
+  document.getElementById('deficit-size').textContent  = goal.toLocaleString();
+  document.getElementById('protein').textContent       = protein;
+  document.getElementById('projected').textContent     = projected;
+  document.getElementById('protein-habit').textContent = protein + 'g';
+
+  document.getElementById('deficit-note').textContent =
+    goal === 500
+      ? `Moderate ${goal} calorie daily deficit — sustainable, preserves muscle, and designed for consistent fat loss over 21 days.`
+      : `Aggressive ${goal} calorie daily deficit — hit your protein target every day without fail to protect muscle mass.`;
+
+  document.getElementById('summary-text').innerHTML =
+    `Your body needs approximately <strong>${tdee.toLocaleString()} calories</strong> per day to maintain your current weight at your activity level.<br><br>` +
+    `To drop fat over 21 days, eat <strong>${deficit.toLocaleString()} calories per day</strong> — ${goal} calories below maintenance. ` +
+    `At this rate you could lose approximately <strong>${projected}kg</strong> over 21 days if you train consistently, hit your steps, and protect your protein.<br><br>` +
+    `Your protein target of <strong>${protein}g per day</strong> is set at 2.2g per kg of bodyweight. This is higher than standard advice because you are in a deficit and training hard. ` +
+    `Hitting this number is what keeps your muscle on while the fat comes off.`;
+
+  document.getElementById('calc-form').style.display  = 'none';
+  document.getElementById('results').style.display    = 'block';
+}
+
+function resetCalc() {
+  document.getElementById('calc-form').style.display  = 'block';
+  document.getElementById('results').style.display    = 'none';
+  ['age','weight','height'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('activity').value = '';
+  document.getElementById('goal').value = '';
+}
+</script>
+</body>
+</html>
